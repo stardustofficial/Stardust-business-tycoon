@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Stardust Tycoon - Tea Stall</title>
+  <title>Stardust Tea Tycoon</title>
   <style>
     * {
       margin: 0;
@@ -14,156 +14,265 @@
       user-select: none;
     }
     body {
-      background: #0b0e14;
+      background: #0a0d14;
       color: #f0f3fa;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
-      touch-action: pan-y;
+      height: 100vh;
+      width: 100vw;
+      touch-action: none;
+      position: fixed;
     }
     #game {
-      max-width: 480px;
       width: 100%;
-      height: 100vh;
-      max-height: 860px;
+      height: 100%;
+      max-width: 500px;
+      margin: 0 auto;
       background: #141a24;
-      border-radius: 0px;
-      box-shadow: 0 0 40px rgba(0,0,0,0.9);
       position: relative;
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* TOP HUD */
+    /* HUD */
     .hud {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 8px 14px;
+      background: linear-gradient(180deg, rgba(8,12,20,0.9) 60%, transparent);
+      z-index: 20;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 14px;
-      background: #0f141e;
-      border-bottom: 1px solid #293141;
-      z-index: 10;
-      flex-shrink: 0;
-      min-height: 48px;
+      pointer-events: none;
     }
+    .hud > * { pointer-events: auto; }
     .hud-currency {
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-weight: 700;
-      font-size: 0.95rem;
-    }
-    .coin-badge {
-      background: #1e2636;
-      padding: 2px 14px 2px 10px;
+      gap: 10px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      padding: 4px 14px 4px 10px;
       border-radius: 30px;
-      border: 1px solid #3f4a62;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      border: 1px solid rgba(255,255,255,0.08);
     }
-    .coin-icon { display: inline-block; width: 20px; height: 20px; background: radial-gradient(circle at 30% 30%, #f9d976, #d49a1a); border-radius: 50%; box-shadow: 0 0 8px #f7b32b; }
-    .gem-icon { display: inline-block; width: 18px; height: 18px; background: radial-gradient(circle at 30% 30%, #8ef, #1a7aff); border-radius: 4px; transform: rotate(15deg); }
+    .coin-icon { display: inline-block; width: 22px; height: 22px; background: radial-gradient(circle at 30% 30%, #f9d976, #d49a1a); border-radius: 50%; box-shadow: 0 0 12px rgba(247,179,43,0.4); }
+    .hud-currency span { font-weight: 700; font-size: 0.95rem; color: #f5e7b0; }
     .hud-level {
-      background: #252f42;
-      padding: 2px 14px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      padding: 4px 16px;
       border-radius: 30px;
+      border: 1px solid rgba(255,255,255,0.08);
       font-size: 0.7rem;
       font-weight: 600;
-      border: 1px solid #4a5670;
+      color: #b7a4ff;
     }
 
-    /* SHOP AREA */
+    /* SHOP SCENE */
     .shop-scene {
       flex: 1;
       position: relative;
-      background: #1c2330;
+      background: #1a212e;
       overflow: hidden;
-      min-height: 300px;
-      border-bottom: 2px solid #2e384b;
+      min-height: 0;
+      touch-action: none;
+    }
+    .shop-bg {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(ellipse at 50% 100%, #2d3a4a 0%, #141a24 70%);
     }
     .shop-floor {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 40%;
-      background: linear-gradient(0deg, #2f3a4a 0%, #232b3a 100%);
-      border-top: 3px solid #3f4b60;
+      height: 45%;
+      background: 
+        repeating-linear-gradient(90deg, #2f3a4a 0px, #2f3a4a 2px, #384452 2px, #384452 4px);
+      border-top: 2px solid #4a5a6a;
     }
-    .counter-area {
+    .shop-floor::before {
+      content: '';
       position: absolute;
-      bottom: 30%;
-      left: 10%;
-      width: 50%;
-      height: 35%;
-      background: #4a3f33;
-      border-radius: 20px 20px 0 0;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 100%, rgba(100,130,180,0.1), transparent);
+    }
+
+    /* Counter */
+    .counter {
+      position: absolute;
+      bottom: 28%;
+      left: 5%;
+      width: 55%;
+      height: 30%;
+      background: linear-gradient(180deg, #5a4d3a, #3d3228);
+      border-radius: 16px 16px 0 0;
       border: 2px solid #6b5d4b;
-      box-shadow: inset 0 -10px 0 #3d3228;
+      border-bottom: none;
+      box-shadow: 0 -8px 0 #2f261e, inset 0 4px 20px rgba(0,0,0,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .counter-top {
+      position: absolute;
+      top: -6px;
+      left: -2px;
+      right: -2px;
+      height: 12px;
+      background: linear-gradient(180deg, #8a7a62, #5a4d3a);
+      border-radius: 6px 6px 0 0;
+      border: 2px solid #6b5d4b;
+      border-bottom: none;
+    }
+    .counter-items {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      font-size: 1.4rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+    .counter-status {
+      position: absolute;
+      top: -28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      padding: 2px 14px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #b7c4e0;
+    }
+
+    /* Tea machine */
+    .tea-machine {
+      position: absolute;
+      bottom: 32%;
+      left: 62%;
+      width: 20%;
+      height: 22%;
+      background: linear-gradient(180deg, #4a5a6a, #2a3a4a);
+      border-radius: 8px 8px 0 0;
+      border: 2px solid #5a6a7a;
+      border-bottom: none;
+      z-index: 2;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 2rem;
-      font-weight: 700;
-      color: #d4b68a;
+      box-shadow: inset 0 -10px 0 #1a2a3a;
     }
-    .counter-area::after {
-      content: '🍵 TEA';
-      font-size: 1rem;
-      background: #2f281e;
-      padding: 2px 12px;
-      border-radius: 30px;
+    .tea-machine .steam {
       position: absolute;
-      bottom: -18px;
-      color: #d4b68a;
-      border: 1px solid #6b5d4b;
+      top: -20px;
+      width: 8px;
+      height: 20px;
+      background: rgba(200,220,255,0.2);
+      border-radius: 50%;
+      animation: steamPuff 1.2s ease-out infinite;
+      filter: blur(2px);
+    }
+    @keyframes steamPuff {
+      0% { opacity: 0; transform: translateY(0) scale(0.5); }
+      50% { opacity: 0.6; transform: translateY(-20px) scale(1); }
+      100% { opacity: 0; transform: translateY(-40px) scale(0.5); }
     }
 
-    /* customers */
+    /* Tables */
+    .table {
+      position: absolute;
+      bottom: 26%;
+      width: 16%;
+      height: 12%;
+      background: linear-gradient(180deg, #6a5d4a, #4a3d2a);
+      border-radius: 6px;
+      border: 2px solid #7a6d5a;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .table:nth-child(1) { right: 8%; }
+    .table:nth-child(2) { right: 28%; }
+    .table .chair {
+      position: absolute;
+      bottom: -16px;
+      width: 14px;
+      height: 14px;
+      background: #4a3d2a;
+      border-radius: 4px 4px 0 0;
+      border: 1px solid #5a4d3a;
+    }
+    .table .chair.left { left: -8px; }
+    .table .chair.right { right: -8px; }
+
+    /* Plants */
+    .plant {
+      position: absolute;
+      bottom: 18%;
+      font-size: 2.2rem;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+      z-index: 0;
+    }
+    .plant:nth-child(1) { left: 2%; }
+    .plant:nth-child(2) { right: 2%; }
+
+    /* CUSTOMERS */
     .customer {
       position: absolute;
-      bottom: 32%;
-      font-size: 2.4rem;
-      transition: left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      bottom: 28%;
+      font-size: 2.8rem;
+      transition: left 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), bottom 0.3s;
       z-index: 5;
       cursor: pointer;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5));
       width: 50px;
       text-align: center;
-      line-height: 1.2;
+      touch-action: none;
     }
     .customer .bubble {
       position: absolute;
-      top: -34px;
+      top: -38px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1f293b;
+      background: rgba(20,28,44,0.92);
+      backdrop-filter: blur(4px);
       padding: 2px 12px;
-      border-radius: 40px;
+      border-radius: 30px;
       font-size: 0.7rem;
       white-space: nowrap;
-      border: 1px solid #4a5a7a;
-      color: #cbd5f0;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #d0ddf0;
       opacity: 0;
-      transition: 0.2s;
+      transition: 0.3s;
     }
-    .customer.waiting .bubble { opacity: 1; }
-    .customer.served .bubble { opacity: 0; }
+    .customer .bubble.show { opacity: 1; }
     .customer .progress-ring {
       position: absolute;
-      bottom: -14px;
+      bottom: -12px;
       left: 50%;
       transform: translateX(-50%);
-      width: 40px;
-      height: 6px;
-      background: #2a3345;
+      width: 36px;
+      height: 5px;
+      background: rgba(0,0,0,0.5);
       border-radius: 10px;
       overflow: hidden;
-      border: 1px solid #3f4a62;
+      border: 1px solid rgba(255,255,255,0.1);
     }
     .customer .progress-ring .fill {
       height: 100%;
@@ -172,64 +281,101 @@
       border-radius: 10px;
       transition: width 0.1s;
     }
-    .customer .status-emoji {
+    .customer .status-icon {
       position: absolute;
-      top: -40px;
-      right: -20px;
-      font-size: 1.4rem;
-      animation: pop 0.4s;
+      top: -30px;
+      right: -16px;
+      font-size: 1.2rem;
+      animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    @keyframes pop {
-      0% { transform: scale(0); opacity: 0; }
-      70% { transform: scale(1.4); }
-      100% { transform: scale(1); opacity: 1; }
+    @keyframes popIn {
+      0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0); opacity: 1; }
+    }
+    .customer.walking {
+      animation: walkBob 0.4s ease-in-out infinite alternate;
+    }
+    @keyframes walkBob {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-4px); }
+    }
+    .customer.leaving {
+      animation: walkOut 0.6s ease-in forwards;
+    }
+    @keyframes walkOut {
+      0% { opacity: 1; transform: translateX(0) scale(1); }
+      100% { opacity: 0; transform: translateX(80px) scale(0.8); }
     }
 
-    /* queue indicator */
-    .queue-badge {
+    /* Employee */
+    .employee {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #1f283b;
-      padding: 4px 14px;
-      border-radius: 30px;
-      border: 1px solid #43506a;
-      font-size: 0.75rem;
-      font-weight: 600;
-      z-index: 8;
+      bottom: 30%;
+      font-size: 2.4rem;
+      z-index: 4;
+      transition: left 0.6s cubic-bezier(0.34, 1.2, 0.64, 1);
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+      width: 44px;
+      text-align: center;
+    }
+    .employee .action-bubble {
+      position: absolute;
+      top: -24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      padding: 1px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      white-space: nowrap;
+      border: 1px solid rgba(255,255,255,0.05);
     }
 
-    /* FLOATING COINS */
-    .float-coin {
+    /* FLOATING EFFECTS */
+    .float-effect {
       position: absolute;
-      font-size: 1.8rem;
       pointer-events: none;
-      z-index: 20;
-      animation: floatCoin 1s ease-out forwards;
+      z-index: 30;
       font-weight: 700;
-      color: #f5d742;
-      text-shadow: 0 0 20px #f7b32b;
+      animation: floatUp 1s ease-out forwards;
+      text-shadow: 0 0 20px currentColor;
     }
-    @keyframes floatCoin {
-      0% { opacity: 1; transform: translateY(0) scale(0.6); }
-      100% { opacity: 0; transform: translateY(-120px) scale(1.6); }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(0.5); }
+      100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+    }
+
+    .coin-explosion {
+      position: absolute;
+      pointer-events: none;
+      z-index: 25;
+      font-size: 1.6rem;
+      animation: coinExplode 0.8s ease-out forwards;
+    }
+    @keyframes coinExplode {
+      0% { opacity: 1; transform: translate(0,0) scale(0) rotate(0); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(360deg); }
     }
 
     /* BOTTOM TOOLBAR */
     .toolbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
       display: flex;
       justify-content: space-around;
-      background: #0f141e;
-      border-top: 1px solid #28303f;
-      padding: 6px 0 env(safe-area-inset-bottom);
-      flex-shrink: 0;
-      flex-wrap: wrap;
-      gap: 2px;
+      background: linear-gradient(0deg, rgba(8,12,20,0.95), rgba(12,18,30,0.9));
+      backdrop-filter: blur(8px);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 4px 0 env(safe-area-inset-bottom);
+      z-index: 20;
     }
     .tool-btn {
       background: transparent;
       border: none;
-      color: #7c88a3;
+      color: #6a7a96;
       font-size: 0.55rem;
       display: flex;
       flex-direction: column;
@@ -237,96 +383,127 @@
       gap: 0px;
       padding: 4px 8px;
       border-radius: 20px;
-      transition: 0.1s;
       cursor: pointer;
       font-weight: 600;
       flex: 1;
-      min-width: 44px;
+      transition: 0.15s;
+      touch-action: manipulation;
     }
-    .tool-btn svg { width: 24px; height: 24px; fill: currentColor; stroke: currentColor; stroke-width: 1.5; }
-    .tool-btn.active { color: #b7a4ff; background: #222b3d; }
+    .tool-btn svg { width: 22px; height: 22px; fill: currentColor; stroke: currentColor; stroke-width: 1.5; }
+    .tool-btn.active { color: #b7a4ff; }
     .tool-btn:active { transform: scale(0.92); }
 
     /* PANELS */
     .panel {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(8, 12, 20, 0.92);
-      backdrop-filter: blur(8px);
-      z-index: 30;
+      inset: 0;
+      background: rgba(8,12,20,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 50;
       display: none;
       flex-direction: column;
-      padding: 20px 16px;
+      padding: 20px 16px 80px;
       overflow-y: auto;
-      animation: fadeIn 0.2s;
+      animation: panelIn 0.25s cubic-bezier(0.34, 1.2, 0.64, 1);
     }
     .panel.open { display: flex; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.96); }
-      to { opacity: 1; transform: scale(1); }
+    @keyframes panelIn {
+      0% { opacity: 0; transform: scale(0.95) translateY(10px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       padding-bottom: 12px;
-      border-bottom: 1px solid #2a3345;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
       margin-bottom: 16px;
     }
+    .panel-header h2 { font-size: 1.1rem; font-weight: 700; }
     .panel-close {
-      background: #2a3345;
+      background: rgba(255,255,255,0.06);
       border: none;
       color: white;
       padding: 4px 16px;
-      border-radius: 40px;
-      font-weight: 700;
+      border-radius: 30px;
+      font-weight: 600;
       cursor: pointer;
+      font-size: 0.8rem;
     }
     .panel-item {
-      background: #1b2332;
-      border-radius: 20px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 16px;
       padding: 14px 16px;
-      margin-bottom: 12px;
-      border: 1px solid #2f3a50;
+      margin-bottom: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 6px;
     }
-    .panel-item .label { font-weight: 600; }
-    .panel-item .sub { font-size: 0.75rem; color: #8a99b8; }
+    .panel-item .label { font-weight: 600; font-size: 0.9rem; }
+    .panel-item .sub { font-size: 0.7rem; color: #8a99b8; }
     .btn-action {
-      background: #3d4b68;
+      background: rgba(255,255,255,0.08);
       border: none;
       color: white;
       padding: 6px 18px;
-      border-radius: 40px;
+      border-radius: 30px;
       font-weight: 600;
       font-size: 0.75rem;
       cursor: pointer;
-      border: 1px solid #5b6b8f;
+      border: 1px solid rgba(255,255,255,0.1);
       transition: 0.1s;
+      touch-action: manipulation;
     }
-    .btn-action:active { transform: scale(0.93); background: #2f3b57; }
-    .btn-action:disabled { opacity: 0.4; }
+    .btn-action:active { transform: scale(0.93); background: rgba(255,255,255,0.15); }
+    .btn-action:disabled { opacity: 0.3; }
 
-    /* upgrade card */
-    .upgrade-card {
-      background: #19212e;
-      border-radius: 16px;
-      padding: 12px;
-      margin: 6px 0;
-      border-left: 4px solid #7b8bb8;
+    /* screen shake */
+    .shake {
+      animation: shake 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px) rotate(-1deg); }
+      75% { transform: translateX(6px) rotate(1deg); }
     }
 
-    /* responsive */
+    /* confetti */
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      animation: confettiFall 1.2s ease-out forwards;
+      pointer-events: none;
+      z-index: 40;
+    }
+    @keyframes confettiFall {
+      0% { opacity: 1; transform: translateY(0) rotate(0) scale(1); }
+      100% { opacity: 0; transform: translateY(120px) rotate(720deg) scale(0.3); }
+    }
+
+    .glow-ring {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(247,179,43,0.3), transparent);
+      animation: glowPulse 0.6s ease-out forwards;
+      pointer-events: none;
+      z-index: 15;
+    }
+    @keyframes glowPulse {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(2); opacity: 0; }
+    }
+
     @media (max-width: 420px) {
-      .customer { font-size: 2rem; width: 40px; }
-      .counter-area { font-size: 1.5rem; }
+      .customer { font-size: 2.2rem; width: 40px; }
+      .employee { font-size: 2rem; width: 38px; }
+      .counter { width: 50%; }
+      .tea-machine { width: 16%; }
+      .table { width: 14%; }
     }
   </style>
 </head>
@@ -335,492 +512,632 @@
   <!-- HUD -->
   <div class="hud">
     <div class="hud-currency">
-      <span class="coin-badge"><span class="coin-icon"></span> <span id="coinDisplay">0</span></span>
-      <span class="coin-badge" style="border-color:#3f6a9a;"><span class="gem-icon"></span> <span id="gemDisplay">0</span></span>
+      <span class="coin-icon"></span>
+      <span id="coinDisplay">0</span>
     </div>
-    <div class="hud-level">⭐ Lv.<span id="playerLevel">1</span></div>
+    <div class="hud-level">⭐ Lv.<span id="levelDisplay">1</span></div>
   </div>
 
   <!-- SHOP SCENE -->
   <div class="shop-scene" id="shopScene">
+    <div class="shop-bg"></div>
     <div class="shop-floor"></div>
-    <div class="counter-area" id="counterDisplay">🍵 Tea Stall</div>
-    <div class="queue-badge" id="queueBadge">👥 0</div>
-    <!-- customers rendered here -->
-    <div id="customerContainer" style="position:relative;width:100%;height:100%;"></div>
+    
+    <!-- Plants -->
+    <div class="plant" style="left:2%;bottom:16%;">🌿</div>
+    <div class="plant" style="right:2%;bottom:16%;">🌿</div>
+    
+    <!-- Tables -->
+    <div class="table" style="right:8%;"><span>🍵</span><div class="chair left"></div><div class="chair right"></div></div>
+    <div class="table" style="right:28%;"><span>☕</span><div class="chair left"></div><div class="chair right"></div></div>
+    
+    <!-- Counter -->
+    <div class="counter" id="counter">
+      <div class="counter-top"></div>
+      <div class="counter-status" id="counterStatus">🍵 Ready</div>
+      <div class="counter-items">
+        <span>🍵</span>
+        <span>🧊</span>
+        <span>🍋</span>
+      </div>
+    </div>
+    
+    <!-- Tea Machine -->
+    <div class="tea-machine" id="teaMachine">
+      <span>☕</span>
+      <div class="steam" style="left:20%;animation-delay:0.2s;"></div>
+      <div class="steam" style="left:50%;animation-delay:0.7s;"></div>
+      <div class="steam" style="left:80%;animation-delay:1.2s;"></div>
+    </div>
+
+    <!-- Employee -->
+    <div class="employee" id="employee" style="left:35%;">
+      <span>👨‍🍳</span>
+      <div class="action-bubble" id="employeeAction">Idle</div>
+    </div>
+
+    <!-- Customer container -->
+    <div id="customerContainer" style="position:absolute;inset:0;pointer-events:none;"></div>
+    <div id="effectContainer" style="position:absolute;inset:0;pointer-events:none;z-index:10;"></div>
   </div>
 
-  <!-- BOTTOM TOOLBAR -->
+  <!-- TOOLBAR -->
   <div class="toolbar">
-    <button class="tool-btn active" data-panel="home"><svg viewBox="0 0 24 24"><path d="M12 3L3 9l9 6 9-6-9-6z"/><path d="M3 15l9 6 9-6"/></svg>Shop</button>
+    <button class="tool-btn active" data-panel="shop"><svg viewBox="0 0 24 24"><path d="M12 3L3 9l9 6 9-6-9-6z"/><path d="M3 15l9 6 9-6"/></svg>Shop</button>
     <button class="tool-btn" data-panel="upgrade"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>Upgrade</button>
-    <button class="tool-btn" data-panel="employees"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20v-2a7 7 0 0114 0v2"/></svg>Staff</button>
+    <button class="tool-btn" data-panel="staff"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20v-2a7 7 0 0114 0v2"/></svg>Staff</button>
     <button class="tool-btn" data-panel="missions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Goals</button>
   </div>
 
   <!-- PANELS -->
   <div class="panel" id="panelUpgrade">
-    <div class="panel-header"><span style="font-size:1.2rem;font-weight:700;">⬆ Upgrades</span><button class="panel-close" data-panel="upgrade">✕</button></div>
+    <div class="panel-header"><h2>⬆ Upgrades</h2><button class="panel-close" data-panel="upgrade">✕</button></div>
     <div id="upgradeList"></div>
   </div>
-  <div class="panel" id="panelEmployees">
-    <div class="panel-header"><span style="font-size:1.2rem;font-weight:700;">👨‍💼 Staff</span><button class="panel-close" data-panel="employees">✕</button></div>
-    <div id="employeeList"></div>
+  <div class="panel" id="panelStaff">
+    <div class="panel-header"><h2>👨‍💼 Staff</h2><button class="panel-close" data-panel="staff">✕</button></div>
+    <div id="staffList"></div>
   </div>
   <div class="panel" id="panelMissions">
-    <div class="panel-header"><span style="font-size:1.2rem;font-weight:700;">🎯 Missions</span><button class="panel-close" data-panel="missions">✕</button></div>
+    <div class="panel-header"><h2>🎯 Missions</h2><button class="panel-close" data-panel="missions">✕</button></div>
     <div id="missionList"></div>
   </div>
-  <div class="panel" id="panelHome" style="display:none;"></div>
 </div>
 
 <script>
-  (function(){
-    "use strict";
+(function(){
+  "use strict";
 
-    // ---------- GAME STATE ----------
-    const G = {
-      coins: 100,
-      gems: 0,
-      level: 1,
-      xp: 0,
-      reputation: 50,
-      totalCustomers: 0,
-      totalEarned: 0,
-      businesses: [{ name: 'Tea Stall', level: 1, employees: [], manager: false, income: 1.2, upgradeCost: 30 }],
-      customers: [],
-      queue: [],
-      serving: null, // customer being served
-      cookTimer: 0,
-      cookMax: 2.0, // seconds
-      isCooking: false,
-      delivered: false,
-      employeeCount: 0,
-      managerActive: false,
-      autoServeInterval: null,
-      customerSpawnTimer: 0,
-      customerSpawnInterval: 3.0,
-      maxQueue: 5,
-      missions: [
-        { id: 'm1', name: 'Serve 5 customers', progress: 0, target: 5, reward: 50, done: false },
-        { id: 'm2', name: 'Earn 200 coins', progress: 0, target: 200, reward: 80, done: false },
-        { id: 'm3', name: 'Hire 2 employees', progress: 0, target: 2, reward: 100, done: false },
-        { id: 'm4', name: 'Reach level 3', progress: 0, target: 3, reward: 150, done: false },
-      ],
-      achievements: [],
-      lastSave: Date.now(),
+  // ============ GAME STATE ============
+  const G = {
+    coins: 100,
+    level: 1,
+    xp: 0,
+    reputation: 50,
+    totalServed: 0,
+    totalEarned: 0,
+    employeeCount: 1,
+    managerActive: false,
+    cookSpeed: 1.0,
+    maxQueue: 6,
+    customers: [],
+    queue: [],
+    serving: null,
+    isCooking: false,
+    cookTimer: 0,
+    cookMax: 2.0,
+    delivered: false,
+    spawnTimer: 0,
+    spawnInterval: 2.5,
+    upgrades: {
+      counter: 1,
+      machine: 1,
+      tables: 1,
+      decoration: 0
+    },
+    missions: [
+      { id: 'm1', name: 'Serve 10 customers', current: 0, target: 10, reward: 50, done: false },
+      { id: 'm2', name: 'Earn 300 coins', current: 0, target: 300, reward: 80, done: false },
+      { id: 'm3', name: 'Reach level 3', current: 0, target: 3, reward: 100, done: false },
+      { id: 'm4', name: 'Hire 2 employees', current: 0, target: 2, reward: 120, done: false },
+    ],
+    lastSave: Date.now(),
+    customerId: 0,
+  };
+
+  // ============ DOM REFS ============
+  const coinDisplay = document.getElementById('coinDisplay');
+  const levelDisplay = document.getElementById('levelDisplay');
+  const counterStatus = document.getElementById('counterStatus');
+  const customerContainer = document.getElementById('customerContainer');
+  const effectContainer = document.getElementById('effectContainer');
+  const shopScene = document.getElementById('shopScene');
+  const employeeEl = document.getElementById('employee');
+  const employeeAction = document.getElementById('employeeAction');
+
+  // ============ HELPERS ============
+  function updateHUD() {
+    coinDisplay.textContent = Math.floor(G.coins);
+    levelDisplay.textContent = G.level;
+  }
+
+  function getIncome() {
+    let base = 1.2 * (1 + G.level * 0.3) * (1 + G.employeeCount * 0.12);
+    if (G.managerActive) base *= 1.6;
+    return base;
+  }
+
+  function spawnFloating(text, x, y, color = '#f5d742') {
+    const el = document.createElement('div');
+    el.className = 'float-effect';
+    el.textContent = text;
+    el.style.left = x + '%';
+    el.style.top = y + '%';
+    el.style.color = color;
+    el.style.fontSize = (1.2 + Math.random() * 0.8) + 'rem';
+    effectContainer.appendChild(el);
+    setTimeout(() => el.remove(), 1200);
+  }
+
+  function spawnCoinExplosion(cx, cy, count = 6) {
+    const emojis = ['🪙','💰','✨','⭐'];
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement('div');
+      el.className = 'coin-explosion';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+      const dist = 40 + Math.random() * 60;
+      el.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+      el.style.setProperty('--ty', Math.sin(angle) * dist - 40 + 'px');
+      el.style.left = cx + '%';
+      el.style.top = cy + '%';
+      el.style.fontSize = (1 + Math.random() * 0.8) + 'rem';
+      effectContainer.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }
+  }
+
+  function spawnConfetti(cx, cy) {
+    const colors = ['#ff6b6b','#feca57','#48dbfb','#ff9ff3','#54a0ff','#5f27cd'];
+    for (let i = 0; i < 20; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = (cx + (Math.random() - 0.5) * 20) + '%';
+      el.style.top = (cy + (Math.random() - 0.5) * 20) + '%';
+      el.style.background = colors[Math.floor(Math.random() * colors.length)];
+      el.style.width = (4 + Math.random() * 8) + 'px';
+      el.style.height = (4 + Math.random() * 8) + 'px';
+      el.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
+      el.style.animationDelay = (Math.random() * 0.3) + 's';
+      effectContainer.appendChild(el);
+      setTimeout(() => el.remove(), 1500);
+    }
+  }
+
+  function glowRing(cx, cy) {
+    const el = document.createElement('div');
+    el.className = 'glow-ring';
+    const size = 60 + Math.random() * 60;
+    el.style.width = size + 'px';
+    el.style.height = size + 'px';
+    el.style.left = (cx - size/200) + '%';
+    el.style.top = (cy - size/200) + '%';
+    effectContainer.appendChild(el);
+    setTimeout(() => el.remove(), 700);
+  }
+
+  function screenShake() {
+    shopScene.classList.add('shake');
+    setTimeout(() => shopScene.classList.remove('shake'), 300);
+  }
+
+  // ============ CUSTOMER SYSTEM ============
+  function spawnCustomer() {
+    if (G.queue.length >= G.maxQueue) return;
+    const types = [
+      { emoji: '👨', patience: 8 + Math.random() * 4, tip: 0.5, label: 'Regular' },
+      { emoji: '👩', patience: 10 + Math.random() * 5, tip: 0.8, label: 'Patient' },
+      { emoji: '👴', patience: 4 + Math.random() * 3, tip: 0.3, label: 'Elder' },
+      { emoji: '🧑‍💼', patience: 6 + Math.random() * 3, tip: 1.5, label: 'Business' },
+      { emoji: '👱‍♀️', patience: 7 + Math.random() * 4, tip: 0.6, label: 'Regular' },
+      { emoji: '👨‍👩‍👦', patience: 12 + Math.random() * 4, tip: 1.2, label: 'Family' },
+    ];
+    const type = types[Math.floor(Math.random() * types.length)];
+    const customer = {
+      id: ++G.customerId,
+      emoji: type.emoji,
+      patience: type.patience,
+      maxPatience: type.patience,
+      tip: type.tip,
+      label: type.label,
+      state: 'waiting', // waiting, cooking, served, leaving
+      progress: 0,
+      waitTimer: 0,
+      position: 0,
+      x: 85 + Math.random() * 15,
     };
+    G.queue.push(customer);
+    G.customers.push(customer);
+    renderCustomers();
+    updateHUD();
+  }
 
-    // DOM refs
-    const coinDisplay = document.getElementById('coinDisplay');
-    const gemDisplay = document.getElementById('gemDisplay');
-    const levelDisplay = document.getElementById('playerLevel');
-    const queueBadge = document.getElementById('queueBadge');
-    const customerContainer = document.getElementById('customerContainer');
-    const counterDisplay = document.getElementById('counterDisplay');
-
-    // ----- helpers -----
-    function updateHUD() {
-      coinDisplay.textContent = Math.floor(G.coins);
-      gemDisplay.textContent = G.gems;
-      levelDisplay.textContent = G.level;
-      queueBadge.textContent = '👥 ' + G.queue.length;
+  function renderCustomers() {
+    customerContainer.innerHTML = '';
+    const queue = G.queue;
+    const maxShow = Math.min(queue.length, 6);
+    for (let i = 0; i < maxShow; i++) {
+      const c = queue[i];
+      const div = document.createElement('div');
+      div.className = 'customer';
+      if (c.state === 'waiting') div.classList.add('walking');
+      if (c.state === 'leaving') div.classList.add('leaving');
+      
+      const xPos = 5 + i * 12;
+      div.style.left = xPos + '%';
+      div.style.bottom = (28 + (i % 2) * 4) + '%';
+      div.dataset.id = c.id;
+      
+      let statusIcon = '';
+      if (c.state === 'waiting') statusIcon = '<span class="status-icon">⏳</span>';
+      else if (c.state === 'cooking') statusIcon = '<span class="status-icon">🍳</span>';
+      else if (c.state === 'served') statusIcon = '<span class="status-icon">✅</span>';
+      
+      div.innerHTML = `
+        <span>${c.emoji}</span>
+        <div class="bubble ${c.state !== 'leaving' ? 'show' : ''}">${c.label} · ${c.state === 'waiting' ? '☕ Tea' : c.state === 'cooking' ? '⏳ Cooking...' : '✅ Done!'}</div>
+        <div class="progress-ring"><div class="fill" style="width:${c.progress * 100}%"></div></div>
+        ${statusIcon}
+      `;
+      
+      if (c.state === 'waiting' || c.state === 'cooking') {
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handleCustomerTap(c.id);
+        });
+      }
+      customerContainer.appendChild(div);
     }
+  }
 
-    function getIncome() {
-      let base = G.businesses[0].income * G.businesses[0].level * (1 + G.employeeCount * 0.15);
-      if (G.managerActive) base *= 1.8;
-      return base;
-    }
-
-    // ----- customer system -----
-    function spawnCustomer() {
-      if (G.queue.length >= G.maxQueue) return;
-      const customer = {
-        id: Date.now() + Math.random() * 1000,
-        state: 'waiting', // waiting, cooking, served, leaving
-        waitTime: 0,
-        maxWait: 12 + Math.random() * 6,
-        position: 0,
-        tip: 0,
-        emoji: ['👨','👩','👴','👵','🧑','👱','👨‍🦰','👩‍🦱'][Math.floor(Math.random()*8)],
-        order: 'Tea',
-        progress: 0,
-      };
-      G.queue.push(customer);
-      G.customers.push(customer);
+  function handleCustomerTap(id) {
+    const c = G.queue.find(q => q.id === id);
+    if (!c) return;
+    
+    if (c.state === 'waiting' && !G.serving) {
+      // Start cooking
+      G.serving = c;
+      c.state = 'cooking';
+      c.progress = 0;
+      G.isCooking = true;
+      G.cookTimer = 0;
+      G.cookMax = (1.8 + Math.random() * 0.6) / G.cookSpeed;
+      counterStatus.textContent = '🍳 Cooking...';
+      employeeAction.textContent = '👨‍🍳 Cooking';
       renderCustomers();
       updateHUD();
-      // mission progress
-      const m = G.missions.find(m => m.id === 'm1');
-      if (m && !m.done) m.progress = Math.min(m.target, m.progress + 0.5);
-      checkMissions();
+      return;
     }
+    
+    if (c.state === 'cooking' && G.serving && G.serving.id === c.id && G.delivered) {
+      completeOrder(c);
+      return;
+    }
+  }
 
-    function renderCustomers() {
-      const container = customerContainer;
-      container.innerHTML = '';
-      const queue = G.queue;
-      const maxShow = Math.min(queue.length, 6);
-      for (let i = 0; i < maxShow; i++) {
-        const c = queue[i];
-        const div = document.createElement('div');
-        div.className = 'customer ' + c.state;
-        div.dataset.id = c.id;
-        div.style.left = (10 + i * 12) + '%';
-        div.style.bottom = (32 + (i % 2) * 4) + '%';
-        div.innerHTML = `
-          <span>${c.emoji}</span>
-          <div class="bubble">${c.order}</div>
-          <div class="progress-ring"><div class="fill" style="width:${c.progress*100}%"></div></div>
-          ${c.state === 'waiting' ? '<div class="status-emoji">⏳</div>' : ''}
-          ${c.state === 'cooking' ? '<div class="status-emoji">🍳</div>' : ''}
-          ${c.state === 'served' ? '<div class="status-emoji">✅</div>' : ''}
-        `;
-        // tap to serve
-        if (c.state === 'waiting' || c.state === 'cooking') {
-          div.addEventListener('click', (e) => {
-            e.stopPropagation();
-            handleCustomerTap(c.id);
-          });
-        }
-        container.appendChild(div);
+  function completeOrder(c) {
+    const baseEarn = 3 + G.level * 1.5 + Math.random() * 3;
+    const tipBonus = c.tip * (1 + G.reputation / 100);
+    const earned = Math.floor(baseEarn + tipBonus);
+    
+    G.coins += earned;
+    G.totalEarned += earned;
+    G.totalServed += 1;
+    G.reputation = Math.min(100, G.reputation + 0.5);
+    G.xp += 3;
+    
+    if (G.xp >= G.level * 20 + 30) {
+      G.level++;
+      G.xp = 0;
+      spawnConfetti(50, 40);
+      spawnFloating('🎉 LEVEL UP!', 40, 30, '#b7a4ff');
+      screenShake();
+    }
+    
+    // Effects
+    const pos = 5 + G.queue.indexOf(c) * 12;
+    spawnCoinExplosion(pos, 60, 8);
+    spawnFloating('+' + earned + '🪙', pos - 2, 50, '#f5d742');
+    glowRing(pos, 55);
+    
+    // Remove from queue
+    const idx = G.queue.indexOf(c);
+    if (idx > -1) G.queue.splice(idx, 1);
+    G.serving = null;
+    G.isCooking = false;
+    G.delivered = false;
+    counterStatus.textContent = '🍵 Ready';
+    employeeAction.textContent = 'Idle';
+    
+    renderCustomers();
+    updateHUD();
+    checkMissions();
+    
+    // Spawn next
+    setTimeout(() => {
+      if (G.queue.length < G.maxQueue && Math.random() < 0.7) spawnCustomer();
+    }, 600);
+  }
+
+  // ============ COOKING LOOP ============
+  function updateCooking(delta) {
+    if (!G.isCooking || !G.serving) return;
+    G.cookTimer += delta * G.cookSpeed;
+    const progress = Math.min(1, G.cookTimer / G.cookMax);
+    G.serving.progress = progress;
+    
+    if (progress >= 1) {
+      G.delivered = true;
+      G.serving.state = 'served';
+      counterStatus.textContent = '✅ Tap to Deliver!';
+      employeeAction.textContent = '✅ Ready!';
+    }
+    renderCustomers();
+  }
+
+  // ============ AUTO SERVE (Manager) ============
+  function autoServe() {
+    if (!G.managerActive) return;
+    if (G.queue.length === 0) return;
+    const c = G.queue[0];
+    if (!c) return;
+    
+    if (c.state === 'waiting' && !G.serving) {
+      G.serving = c;
+      c.state = 'cooking';
+      c.progress = 0;
+      G.isCooking = true;
+      G.cookTimer = 0;
+      G.cookMax = (1.8 + Math.random() * 0.6) / G.cookSpeed;
+      counterStatus.textContent = '🤖 Auto-Cooking';
+      employeeAction.textContent = '🤖 Auto';
+      renderCustomers();
+    } else if (c.state === 'cooking' && G.serving && G.serving.id === c.id && G.delivered) {
+      completeOrder(c);
+    }
+  }
+
+  // ============ MISSIONS ============
+  function checkMissions() {
+    for (let m of G.missions) {
+      if (m.done) continue;
+      if (m.id === 'm1') m.current = G.totalServed;
+      if (m.id === 'm2') m.current = G.totalEarned;
+      if (m.id === 'm3') m.current = G.level;
+      if (m.id === 'm4') m.current = G.employeeCount;
+      
+      if (m.current >= m.target) {
+        m.done = true;
+        G.coins += m.reward;
+        spawnFloating('✅ Mission: ' + m.name + ' +' + m.reward, 30, 40, '#7bed9f');
+        spawnConfetti(50, 50);
       }
-      // update progress bars
-      document.querySelectorAll('.customer .fill').forEach((el, idx) => {
-        if (idx < queue.length) {
-          const pct = Math.min(1, queue[idx].progress || 0);
-          el.style.width = (pct * 100) + '%';
+    }
+    updateHUD();
+  }
+
+  // ============ UPGRADES ============
+  function upgradeCounter() {
+    const cost = 50 + G.upgrades.counter * 40;
+    if (G.coins < cost) return;
+    G.coins -= cost;
+    G.upgrades.counter += 1;
+    G.cookSpeed = 1 + G.upgrades.counter * 0.15;
+    spawnFloating('⬆ Counter Lv.' + G.upgrades.counter, 30, 50, '#7b9cf5');
+    updateHUD();
+    renderUpgradePanel();
+  }
+
+  function upgradeMachine() {
+    const cost = 80 + G.upgrades.machine * 50;
+    if (G.coins < cost) return;
+    G.coins -= cost;
+    G.upgrades.machine += 1;
+    G.cookSpeed = 1 + G.upgrades.machine * 0.2;
+    spawnFloating('⚙️ Machine Lv.' + G.upgrades.machine, 50, 50, '#7b9cf5');
+    updateHUD();
+    renderUpgradePanel();
+  }
+
+  function hireEmployee() {
+    const cost = 60 + G.employeeCount * 35;
+    if (G.coins < cost) return;
+    G.coins -= cost;
+    G.employeeCount += 1;
+    spawnFloating('👤 Hired!', 40, 50, '#7bed9f');
+    updateHUD();
+    renderStaffPanel();
+    checkMissions();
+  }
+
+  function hireManager() {
+    if (G.managerActive) return;
+    if (G.coins < 400) return;
+    G.coins -= 400;
+    G.managerActive = true;
+    spawnFloating('🧠 Manager Active!', 40, 50, '#b388ff');
+    spawnConfetti(50, 50);
+    updateHUD();
+    renderStaffPanel();
+  }
+
+  // ============ RENDER PANELS ============
+  function renderUpgradePanel() {
+    const container = document.getElementById('upgradeList');
+    container.innerHTML = `
+      <div class="panel-item">
+        <div><span class="label">🪑 Counter Lv.${G.upgrades.counter}</span><br><span class="sub">Faster cooking</span></div>
+        <button class="btn-action" id="upgCounter">⬆ (${50 + G.upgrades.counter * 40})</button>
+      </div>
+      <div class="panel-item">
+        <div><span class="label">⚙️ Tea Machine Lv.${G.upgrades.machine}</span><br><span class="sub">+${(G.upgrades.machine * 20)}% speed</span></div>
+        <button class="btn-action" id="upgMachine">⬆ (${80 + G.upgrades.machine * 50})</button>
+      </div>
+      <div class="panel-item">
+        <div><span class="label">⭐ Reputation</span><br><span class="sub">${G.reputation.toFixed(0)}% · Better tips</span></div>
+        <div style="background:rgba(255,255,255,0.1);width:60px;height:6px;border-radius:10px;overflow:hidden;"><div style="height:100%;width:${G.reputation}%;background:linear-gradient(90deg,#f5b342,#f7d94a);border-radius:10px;"></div></div>
+      </div>
+      <div class="panel-item">
+        <div><span class="label">📈 Total Served</span><br><span class="sub">${G.totalServed} customers</span></div>
+        <span style="color:#7b9cf5;">${Math.floor(G.totalEarned)}🪙</span>
+      </div>
+    `;
+    document.getElementById('upgCounter')?.addEventListener('click', upgradeCounter);
+    document.getElementById('upgMachine')?.addEventListener('click', upgradeMachine);
+  }
+
+  function renderStaffPanel() {
+    const container = document.getElementById('staffList');
+    container.innerHTML = `
+      <div class="panel-item">
+        <div><span class="label">👨‍🍳 Employees</span><br><span class="sub">${G.employeeCount} hired · +${(G.employeeCount * 12)}% income</span></div>
+        <button class="btn-action" id="hireStaff">Hire (${60 + G.employeeCount * 35})</button>
+      </div>
+      <div class="panel-item">
+        <div><span class="label">🧠 Manager</span><br><span class="sub">${G.managerActive ? '✅ Active - Auto serves' : 'Automates serving'}</span></div>
+        <button class="btn-action" id="hireManager" ${G.managerActive ? 'disabled' : ''}>${G.managerActive ? 'Active' : 'Hire (400)'}</button>
+      </div>
+      <div style="padding:12px;background:rgba(255,255,255,0.04);border-radius:16px;margin-top:8px;font-size:0.8rem;color:#8a99b8;">
+        💡 Employees boost income by 12% each. Manager automates the entire serving process.
+      </div>
+    `;
+    document.getElementById('hireStaff')?.addEventListener('click', hireEmployee);
+    document.getElementById('hireManager')?.addEventListener('click', hireManager);
+  }
+
+  function renderMissionPanel() {
+    const container = document.getElementById('missionList');
+    let html = '';
+    for (let m of G.missions) {
+      const done = m.done ? '✅' : '⏳';
+      const prog = Math.min(m.target, m.current) + '/' + m.target;
+      html += `<div class="panel-item" style="${m.done ? 'border-left:4px solid #7bed9f;' : ''}">
+        <div><span class="label">${done} ${m.name}</span><br><span class="sub">${prog}</span></div>
+        <span style="color:#f5d742;">+${m.reward}🪙</span>
+      </div>`;
+    }
+    container.innerHTML = html;
+  }
+
+  // ============ PANEL TOGGLES ============
+  function initPanels() {
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const panel = this.dataset.panel;
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
+        if (panel !== 'shop') {
+          const target = document.getElementById('panel' + panel.charAt(0).toUpperCase() + panel.slice(1));
+          if (target) {
+            target.classList.add('open');
+            if (panel === 'upgrade') renderUpgradePanel();
+            if (panel === 'staff') renderStaffPanel();
+            if (panel === 'missions') renderMissionPanel();
+          }
         }
       });
-    }
+    });
+    document.querySelectorAll('.panel-close').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.panel').classList.remove('open');
+        document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+        document.querySelector('[data-panel="shop"]')?.classList.add('active');
+      });
+    });
+  }
 
-    function handleCustomerTap(id) {
-      const c = G.queue.find(q => q.id === id);
-      if (!c) return;
-      if (c.state === 'waiting' && !G.serving) {
-        // start cooking
-        G.serving = c;
-        c.state = 'cooking';
-        c.progress = 0;
-        G.isCooking = true;
-        G.cookTimer = 0;
-        G.cookMax = 1.8 + Math.random() * 0.8;
-        counterDisplay.textContent = '🍳 Cooking...';
-        renderCustomers();
-        updateHUD();
-        return;
+  // ============ SAVE / LOAD ============
+  function saveGame() {
+    try {
+      const data = { ...G, lastSave: Date.now() };
+      localStorage.setItem('stardustTeaV3', JSON.stringify(data));
+    } catch(e){}
+  }
+
+  function loadGame() {
+    try {
+      const raw = localStorage.getItem('stardustTeaV3');
+      if (!raw) return false;
+      const data = JSON.parse(raw);
+      Object.assign(G, data);
+      if (!G.missions || G.missions.length === 0) {
+        G.missions = [
+          { id: 'm1', name: 'Serve 10 customers', current: 0, target: 10, reward: 50, done: false },
+          { id: 'm2', name: 'Earn 300 coins', current: 0, target: 300, reward: 80, done: false },
+          { id: 'm3', name: 'Reach level 3', current: 0, target: 3, reward: 100, done: false },
+          { id: 'm4', name: 'Hire 2 employees', current: 0, target: 2, reward: 120, done: false },
+        ];
       }
-      if (c.state === 'cooking' && G.serving && G.serving.id === c.id && G.delivered) {
-        // deliver!
-        completeOrder(c);
-        return;
-      }
+      if (!G.upgrades) G.upgrades = { counter: 1, machine: 1, tables: 1, decoration: 0 };
+      return true;
+    } catch(e){ return false; }
+  }
+
+  // ============ GAME LOOP ============
+  let lastTime = 0;
+  function gameLoop(time) {
+    const delta = Math.min(0.05, (time - lastTime) / 1000);
+    lastTime = time;
+    
+    // Spawn customers
+    G.spawnTimer += delta;
+    if (G.spawnTimer >= G.spawnInterval) {
+      G.spawnTimer = 0;
+      if (G.queue.length < G.maxQueue && Math.random() < 0.6) spawnCustomer();
     }
-
-    function completeOrder(c) {
-      const earned = Math.floor(3 + G.businesses[0].level * 1.5 + Math.random() * 4);
-      G.coins += earned;
-      G.totalEarned += earned;
-      G.totalCustomers += 1;
-      G.reputation = Math.min(100, G.reputation + 0.5);
-      // floating coins
-      spawnFloatingCoin('+' + earned + '🪙', '#f5d742');
-      // remove from queue
-      const idx = G.queue.indexOf(c);
-      if (idx > -1) G.queue.splice(idx, 1);
-      G.serving = null;
-      G.isCooking = false;
-      G.delivered = false;
-      counterDisplay.textContent = '🍵 Tea Stall';
-      renderCustomers();
-      updateHUD();
-      checkMissions();
-      // spawn new
-      setTimeout(() => { if (G.queue.length < G.maxQueue) spawnCustomer(); }, 800);
-    }
-
-    // cooking loop
-    function updateCooking(delta) {
-      if (!G.isCooking || !G.serving) return;
-      G.cookTimer += delta;
-      const progress = Math.min(1, G.cookTimer / G.cookMax);
-      G.serving.progress = progress;
-      if (progress >= 1) {
-        G.delivered = true;
-        G.serving.state = 'served';
-        counterDisplay.textContent = '✅ Tap to Deliver!';
-        renderCustomers();
-        updateHUD();
-      } else {
-        renderCustomers();
-      }
-    }
-
-    // auto serve (manager)
-    function autoServe() {
-      if (!G.managerActive) return;
-      if (G.queue.length === 0) return;
-      const c = G.queue[0];
-      if (!c) return;
-      if (c.state === 'waiting' && !G.serving) {
-        // start cooking automatically
-        G.serving = c;
-        c.state = 'cooking';
-        c.progress = 0;
-        G.isCooking = true;
-        G.cookTimer = 0;
-        G.cookMax = 1.2 + Math.random() * 0.6;
-        counterDisplay.textContent = '🤖 Auto-Cooking...';
-        renderCustomers();
-        updateHUD();
-      } else if (c.state === 'cooking' && G.serving && G.serving.id === c.id && G.delivered) {
-        completeOrder(c);
-      }
-    }
-
-    // spawn floating coin
-    function spawnFloatingCoin(text, color = '#f5d742') {
-      const el = document.createElement('div');
-      el.className = 'float-coin';
-      el.textContent = text;
-      el.style.left = (20 + Math.random() * 60) + '%';
-      el.style.top = (30 + Math.random() * 30) + '%';
-      el.style.color = color;
-      document.getElementById('shopScene').appendChild(el);
-      setTimeout(() => el.remove(), 1200);
-    }
-
-    // ----- missions -----
-    function checkMissions() {
-      for (let m of G.missions) {
-        if (m.done) continue;
-        if (m.id === 'm1' && m.progress >= m.target) { m.done = true; G.coins += m.reward; spawnFloatingCoin('✅ Mission complete! +' + m.reward, '#7bed9f'); }
-        if (m.id === 'm2' && G.totalEarned >= m.target) { m.done = true; G.coins += m.reward; spawnFloatingCoin('✅ Mission complete! +' + m.reward, '#7bed9f'); }
-        if (m.id === 'm3' && G.employeeCount >= m.target) { m.done = true; G.coins += m.reward; spawnFloatingCoin('✅ Mission complete! +' + m.reward, '#7bed9f'); }
-        if (m.id === 'm4' && G.level >= m.target) { m.done = true; G.coins += m.reward; spawnFloatingCoin('✅ Mission complete! +' + m.reward, '#7bed9f'); }
-      }
-      updateHUD();
-    }
-
-    // ----- upgrades -----
-    function upgradeBusiness() {
-      const biz = G.businesses[0];
-      const cost = Math.floor(30 + biz.level * 15);
-      if (G.coins < cost) return;
-      G.coins -= cost;
-      biz.level += 1;
-      G.xp += 8;
-      if (G.xp >= G.level * 20 + 30) { G.level++; G.xp = 0; }
-      spawnFloatingCoin('⬆ Level ' + biz.level, '#7b9cf5');
-      updateHUD();
-      renderUpgradePanel();
-    }
-
-    function hireEmployee() {
-      const cost = 50 + G.employeeCount * 30;
-      if (G.coins < cost) return;
-      G.coins -= cost;
-      G.employeeCount += 1;
-      G.businesses[0].employees.push({ level: 1 });
-      spawnFloatingCoin('👤 Hired!', '#7bed9f');
-      updateHUD();
-      renderEmployeePanel();
-      checkMissions();
-    }
-
-    function hireManager() {
-      if (G.managerActive) return;
-      if (G.coins < 300) return;
-      G.coins -= 300;
-      G.managerActive = true;
-      spawnFloatingCoin('🧠 Manager active!', '#b388ff');
-      updateHUD();
-      renderEmployeePanel();
-    }
-
-    // ----- render panels -----
-    function renderUpgradePanel() {
-      const container = document.getElementById('upgradeList');
-      const biz = G.businesses[0];
-      const cost = Math.floor(30 + biz.level * 15);
-      container.innerHTML = `
-        <div class="panel-item">
-          <div><span class="label">🍵 Tea Stall</span><br><span class="sub">Level ${biz.level} · Income ${(biz.income * biz.level * (1 + G.employeeCount*0.15)).toFixed(1)}/s</span></div>
-          <button class="btn-action" id="upgradeBizBtn">⬆ Upgrade (${cost})</button>
-        </div>
-        <div class="upgrade-card">
-          <div style="display:flex;justify-content:space-between;"><span>⭐ Reputation</span><span>${G.reputation.toFixed(0)}%</span></div>
-          <div style="background:#1e2636;height:6px;border-radius:10px;margin:4px 0;"><div style="height:100%;width:${G.reputation}%;background:linear-gradient(90deg,#f5b342,#f7d94a);border-radius:10px;"></div></div>
-        </div>
-        <div class="upgrade-card">
-          <span class="label">📈 Total Earned: ${Math.floor(G.totalEarned)}</span>
-        </div>
-      `;
-      document.getElementById('upgradeBizBtn')?.addEventListener('click', upgradeBusiness);
-    }
-
-    function renderEmployeePanel() {
-      const container = document.getElementById('employeeList');
-      const biz = G.businesses[0];
-      container.innerHTML = `
-        <div class="panel-item">
-          <div><span class="label">👨‍💼 Employees</span><br><span class="sub">${G.employeeCount} hired</span></div>
-          <button class="btn-action" id="hireEmpBtn">Hire (${50 + G.employeeCount * 30})</button>
-        </div>
-        <div class="panel-item">
-          <div><span class="label">🧠 Manager</span><br><span class="sub">${G.managerActive ? '✅ Active' : 'Automates serving'}</span></div>
-          <button class="btn-action" id="hireManagerBtn" ${G.managerActive ? 'disabled' : ''}>${G.managerActive ? 'Active' : 'Hire (300)'}</button>
-        </div>
-        <div style="padding:8px;background:#1a212e;border-radius:16px;margin-top:8px;">
-          <div style="font-size:0.8rem;color:#9aabcc;">👥 Employees increase income by 15% each.</div>
-        </div>
-      `;
-      document.getElementById('hireEmpBtn')?.addEventListener('click', hireEmployee);
-      document.getElementById('hireManagerBtn')?.addEventListener('click', hireManager);
-    }
-
-    function renderMissionPanel() {
-      const container = document.getElementById('missionList');
-      let html = '';
-      for (let m of G.missions) {
-        const done = m.done ? '✅' : '⏳';
-        const prog = m.progress + '/' + m.target;
-        html += `<div class="panel-item" style="${m.done ? 'border-left-color:#7bed9f;' : ''}">
-          <div><span class="label">${done} ${m.name}</span><br><span class="sub">${prog}</span></div>
-          <span style="color:#f5d742;">+${m.reward}🪙</span>
-        </div>`;
-      }
-      container.innerHTML = html;
-    }
-
-    // ----- game loop -----
-    let lastTime = 0;
-    function gameLoop(time) {
-      const delta = Math.min(0.05, (time - lastTime) / 1000);
-      lastTime = time;
-
-      // spawn customers
-      G.customerSpawnTimer += delta;
-      if (G.customerSpawnTimer >= G.customerSpawnInterval) {
-        G.customerSpawnTimer = 0;
-        if (G.queue.length < G.maxQueue && Math.random() < 0.7) spawnCustomer();
-      }
-
-      // cooking
-      updateCooking(delta);
-
-      // auto serve (manager)
-      if (G.managerActive) {
-        autoServe();
-      }
-
-      // customer wait time & anger
-      for (let c of G.queue) {
-        if (c.state === 'waiting') {
-          c.waitTime += delta;
-          if (c.waitTime > c.maxWait) {
-            // angry leave
-            spawnFloatingCoin('😡 Left!', '#ff6b6b');
+    
+    // Cooking
+    updateCooking(delta);
+    
+    // Auto serve (manager)
+    if (G.managerActive) autoServe();
+    
+    // Customer patience
+    for (let c of G.queue) {
+      if (c.state === 'waiting') {
+        c.waitTimer += delta;
+        if (c.waitTimer > c.maxPatience) {
+          // Angry leave
+          const idx = G.queue.indexOf(c);
+          if (idx > -1) {
+            spawnFloating('😡 Left!', 5 + idx * 12, 50, '#ff6b6b');
             G.reputation = Math.max(0, G.reputation - 2);
-            const idx = G.queue.indexOf(c);
-            if (idx > -1) G.queue.splice(idx, 1);
-            if (G.serving === c) { G.serving = null; G.isCooking = false; G.delivered = false; counterDisplay.textContent = '🍵 Tea Stall'; }
+            G.queue.splice(idx, 1);
+            if (G.serving === c) { G.serving = null; G.isCooking = false; G.delivered = false; counterStatus.textContent = '🍵 Ready'; }
             renderCustomers();
             updateHUD();
           }
         }
       }
-
-      // passive income
-      G.coins += getIncome() * delta * 0.4;
-      G.totalEarned += getIncome() * delta * 0.4;
-      updateHUD();
-
-      // save
-      if (Math.random() < 0.01) saveGame();
-
-      renderCustomers();
-      requestAnimationFrame(gameLoop);
     }
-
-    // ----- save/load -----
-    function saveGame() {
-      try {
-        const data = { ...G, lastSave: Date.now() };
-        localStorage.setItem('stardustTycoonV2', JSON.stringify(data));
-      } catch(e){}
+    
+    // Passive income
+    G.coins += getIncome() * delta * 0.3;
+    G.totalEarned += getIncome() * delta * 0.3;
+    
+    updateHUD();
+    renderCustomers();
+    
+    // Update employee position
+    if (G.isCooking) {
+      employeeEl.style.left = '45%';
+    } else {
+      employeeEl.style.left = '35%';
     }
+    
+    requestAnimationFrame(gameLoop);
+  }
 
-    function loadGame() {
-      try {
-        const raw = localStorage.getItem('stardustTycoonV2');
-        if (!raw) return false;
-        const data = JSON.parse(raw);
-        Object.assign(G, data);
-        // ensure missions
-        if (!G.missions || G.missions.length === 0) {
-          G.missions = [
-            { id: 'm1', name: 'Serve 5 customers', progress: 0, target: 5, reward: 50, done: false },
-            { id: 'm2', name: 'Earn 200 coins', progress: 0, target: 200, reward: 80, done: false },
-            { id: 'm3', name: 'Hire 2 employees', progress: 0, target: 2, reward: 100, done: false },
-            { id: 'm4', name: 'Reach level 3', progress: 0, target: 3, reward: 150, done: false },
-          ];
-        }
-        if (!G.businesses || G.businesses.length === 0) {
-          G.businesses = [{ name: 'Tea Stall', level: 1, employees: [], manager: false, income: 1.2, upgradeCost: 30 }];
-        }
-        G.employeeCount = G.businesses[0].employees.length;
-        G.managerActive = G.businesses[0].manager || false;
-        return true;
-      } catch(e){ return false; }
-    }
-
-    // ----- init UI panels -----
-    function initPanels() {
-      document.querySelectorAll('.tool-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const panel = this.dataset.panel;
-          document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
-          if (panel !== 'home') {
-            const target = document.getElementById('panel' + panel.charAt(0).toUpperCase() + panel.slice(1));
-            if (target) {
-              target.classList.add('open');
-              if (panel === 'upgrade') renderUpgradePanel();
-              if (panel === 'employees') renderEmployeePanel();
-              if (panel === 'missions') renderMissionPanel();
-            }
-          }
-        });
-      });
-      document.querySelectorAll('.panel-close').forEach(btn => {
-        btn.addEventListener('click', function() {
-          this.closest('.panel').classList.remove('open');
-          document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-          document.querySelector('[data-panel="home"]')?.classList.add('active');
-        });
-      });
-      // default home
-      document.querySelector('[data-panel="home"]')?.classList.add('active');
-    }
-
-    // ----- start -----
-    function init() {
-      loadGame();
-      updateHUD();
-      renderCustomers();
-      initPanels();
-      // initial customer
-      setTimeout(() => { if (G.queue.length === 0) spawnCustomer(); }, 500);
-      // auto save
-      setInterval(saveGame, 5000);
-      // start loop
-      requestAnimationFrame(gameLoop);
-    }
-
-    // handle visibility change (offline earnings)
+  // ============ INIT ============
+  function init() {
+    loadGame();
+    updateHUD();
+    initPanels();
+    renderCustomers();
+    renderUpgradePanel();
+    renderStaffPanel();
+    renderMissionPanel();
+    
+    // Initial customers
+    setTimeout(() => { if (G.queue.length === 0) spawnCustomer(); }, 500);
+    setTimeout(() => { if (G.queue.length < 3) spawnCustomer(); }, 1200);
+    
+    // Auto save
+    setInterval(saveGame, 3000);
+    
+    // Visibility change
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         saveGame();
@@ -830,9 +1147,12 @@
         renderCustomers();
       }
     });
+    
+    requestAnimationFrame(gameLoop);
+  }
 
-    init();
-  })();
+  init();
+})();
 </script>
 </body>
 </html>

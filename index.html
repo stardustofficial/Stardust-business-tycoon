@@ -1,984 +1,1040 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Stardust CEO - Global Empire</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-    body {
-      background: #0a0d14;
-      color: #e8edf5;
-      overflow: hidden;
-      height: 100vh;
-      width: 100vw;
-    }
-    #app {
-      max-width: 480px;
-      margin: 0 auto;
-      height: 100vh;
-      background: #111820;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      overflow: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Stardust CEO - Empire Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        body {
+            background: #080b12;
+            color: #e8edf5;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        #app {
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100vh;
+            background: #0f1620;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
 
-    /* HUD */
-    .hud {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 16px;
-      background: rgba(10,14,22,0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      z-index: 10;
-      flex-shrink: 0;
-      min-height: 52px;
-    }
-    .hud-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .hud-balance {
-      background: rgba(255,215,0,0.08);
-      border: 1px solid rgba(255,215,0,0.15);
-      padding: 4px 16px 4px 12px;
-      border-radius: 30px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 700;
-      font-size: 1rem;
-      color: #f5d742;
-    }
-    .hud-balance svg {
-      width: 20px;
-      height: 20px;
-      fill: #f5d742;
-    }
-    .hud-level {
-      font-size: 0.7rem;
-      color: #6a7a92;
-      background: rgba(255,255,255,0.04);
-      padding: 4px 14px;
-      border-radius: 30px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
+        /* HUD */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 18px;
+            background: rgba(10,14,22,0.92);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            z-index: 10;
+            flex-shrink: 0;
+            min-height: 56px;
+        }
+        .hud-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .hud-left svg {
+            width: 24px;
+            height: 24px;
+            fill: #4a6cf7;
+        }
+        .hud-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #b7c4e0;
+        }
+        .hud-balance {
+            background: rgba(255,215,0,0.06);
+            border: 1px solid rgba(255,215,0,0.12);
+            padding: 4px 16px 4px 12px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #f5d742;
+        }
+        .hud-balance svg {
+            width: 18px;
+            height: 18px;
+            fill: #f5d742;
+        }
+        .hud-level {
+            font-size: 0.65rem;
+            color: #6a7a92;
+            background: rgba(255,255,255,0.03);
+            padding: 4px 12px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.04);
+            margin-left: 8px;
+        }
 
-    /* PAGES */
-    .page {
-      flex: 1;
-      display: none;
-      flex-direction: column;
-      overflow-y: auto;
-      padding: 12px 16px 70px;
-      animation: fadeIn 0.25s ease;
-    }
-    .page.active {
-      display: flex;
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(6px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    .page::-webkit-scrollbar {
-      width: 3px;
-    }
-    .page::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .page::-webkit-scrollbar-thumb {
-      background: #2a3345;
-      border-radius: 10px;
-    }
+        /* PAGES */
+        .page {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            padding: 12px 14px 70px;
+            animation: fadeIn 0.2s ease;
+        }
+        .page.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(6px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .page::-webkit-scrollbar {
+            width: 3px;
+        }
+        .page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .page::-webkit-scrollbar-thumb {
+            background: #2a3345;
+            border-radius: 10px;
+        }
 
-    /* BOTTOM NAV */
-    .bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      background: rgba(10,14,22,0.95);
-      backdrop-filter: blur(8px);
-      border-top: 1px solid rgba(255,255,255,0.04);
-      padding: 4px 0 env(safe-area-inset-bottom);
-      flex-shrink: 0;
-      z-index: 10;
-    }
-    .nav-btn {
-      background: transparent;
-      border: none;
-      color: #4a5a72;
-      font-size: 0.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1px;
-      padding: 4px 8px;
-      border-radius: 16px;
-      cursor: pointer;
-      font-weight: 500;
-      flex: 1;
-      transition: 0.15s;
-      max-width: 80px;
-    }
-    .nav-btn svg {
-      width: 24px;
-      height: 24px;
-      fill: currentColor;
-      stroke: currentColor;
-      stroke-width: 1.5;
-    }
-    .nav-btn.active {
-      color: #b7a4ff;
-      background: rgba(255,255,255,0.04);
-    }
-    .nav-btn:active {
-      transform: scale(0.92);
-    }
+        /* BOTTOM NAV */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(10,14,22,0.96);
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255,255,255,0.04);
+            padding: 4px 0 env(safe-area-inset-bottom);
+            flex-shrink: 0;
+            z-index: 10;
+        }
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: #4a5a72;
+            font-size: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            padding: 4px 6px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 500;
+            flex: 1;
+            max-width: 80px;
+            transition: 0.15s;
+            touch-action: manipulation;
+        }
+        .nav-btn svg {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+            stroke: currentColor;
+            stroke-width: 1.5;
+        }
+        .nav-btn.active {
+            color: #b7a4ff;
+            background: rgba(255,255,255,0.04);
+        }
+        .nav-btn:active {
+            transform: scale(0.92);
+        }
 
-    /* CARDS */
-    .card {
-      background: rgba(255,255,255,0.03);
-      border-radius: 16px;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .card-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-    .card-label {
-      font-size: 0.75rem;
-      color: #6a7a92;
-    }
-    .card-value {
-      font-weight: 600;
-      font-size: 0.95rem;
-    }
-    .card-value.gold {
-      color: #f5d742;
-    }
-    .card-value.green {
-      color: #7bed9f;
-    }
-    .card-value.red {
-      color: #ff6b6b;
-    }
+        /* CARDS */
+        .card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: 0.15s;
+        }
+        .card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .card-label {
+            font-size: 0.7rem;
+            color: #6a7a92;
+        }
+        .card-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .card-value.gold {
+            color: #f5d742;
+        }
+        .card-value.green {
+            color: #7bed9f;
+        }
+        .card-value.red {
+            color: #ff6b6b;
+        }
+        .card .biz-icon {
+            font-size: 1.4rem;
+            margin-right: 6px;
+        }
 
-    .btn-action {
-      background: rgba(255,255,255,0.06);
-      border: none;
-      color: #e8edf5;
-      padding: 6px 18px;
-      border-radius: 30px;
-      font-weight: 500;
-      font-size: 0.7rem;
-      cursor: pointer;
-      border: 1px solid rgba(255,255,255,0.06);
-      transition: 0.1s;
-      touch-action: manipulation;
-    }
-    .btn-action:active {
-      transform: scale(0.94);
-      background: rgba(255,255,255,0.1);
-    }
-    .btn-action:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-    .btn-primary {
-      background: #4a6cf7;
-      border-color: #4a6cf7;
-      color: white;
-    }
-    .btn-primary:active {
-      background: #3a5ce7;
-    }
-    .btn-success {
-      background: #2d8f5e;
-      border-color: #2d8f5e;
-      color: white;
-    }
-    .btn-danger {
-      background: #c0392b;
-      border-color: #c0392b;
-      color: white;
-    }
+        .btn-action {
+            background: rgba(255,255,255,0.06);
+            border: none;
+            color: #e8edf5;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.7rem;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.06);
+            transition: 0.1s;
+            touch-action: manipulation;
+        }
+        .btn-action:active {
+            transform: scale(0.94);
+            background: rgba(255,255,255,0.1);
+        }
+        .btn-action:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .btn-primary {
+            background: #4a6cf7;
+            border-color: #4a6cf7;
+            color: white;
+        }
+        .btn-primary:active {
+            background: #3a5ce7;
+        }
+        .btn-success {
+            background: #2d8f5e;
+            border-color: #2d8f5e;
+            color: white;
+        }
+        .btn-gold {
+            background: rgba(245,215,66,0.15);
+            border-color: rgba(245,215,66,0.2);
+            color: #f5d742;
+        }
 
-    /* Business grid */
-    .biz-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .biz-card {
-      background: rgba(255,255,255,0.03);
-      border-radius: 14px;
-      padding: 12px;
-      border: 1px solid rgba(255,255,255,0.04);
-      text-align: center;
-      transition: 0.15s;
-    }
-    .biz-card.locked {
-      opacity: 0.5;
-    }
-    .biz-card .biz-icon {
-      font-size: 1.6rem;
-      margin-bottom: 4px;
-    }
-    .biz-card .biz-name {
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-bottom: 2px;
-    }
-    .biz-card .biz-income {
-      font-size: 0.7rem;
-      color: #f5d742;
-    }
-    .biz-card .biz-level {
-      font-size: 0.6rem;
-      color: #6a7a92;
-    }
+        /* Business grid */
+        .biz-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+        .biz-card {
+            background: rgba(255,255,255,0.03);
+            border-radius: 14px;
+            padding: 12px 10px;
+            border: 1px solid rgba(255,255,255,0.04);
+            text-align: center;
+            transition: 0.15s;
+        }
+        .biz-card.locked {
+            opacity: 0.5;
+        }
+        .biz-card .biz-icon {
+            font-size: 1.8rem;
+            margin-bottom: 2px;
+        }
+        .biz-card .biz-name {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .biz-card .biz-income {
+            font-size: 0.7rem;
+            color: #f5d742;
+        }
+        .biz-card .biz-level {
+            font-size: 0.6rem;
+            color: #6a7a92;
+        }
+        .biz-card .biz-cost {
+            font-size: 0.65rem;
+            color: #ff6b6b;
+        }
 
-    /* Globe */
-    .globe-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 300px;
-      position: relative;
-    }
-    .globe {
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #1a3a5a, #0a1a2a);
-      border: 2px solid rgba(255,255,255,0.08);
-      position: relative;
-      overflow: hidden;
-      cursor: grab;
-      touch-action: none;
-      box-shadow: 0 0 60px rgba(74,108,247,0.1);
-    }
-    .globe:active {
-      cursor: grabbing;
-    }
-    .globe .dot {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background: #e74c5e;
-      border-radius: 50%;
-      box-shadow: 0 0 16px rgba(231,76,94,0.6);
-      transform: translate(-50%, -50%);
-      transition: all 0.3s;
-    }
-    .globe .dot.active {
-      background: #2ecc71;
-      box-shadow: 0 0 20px rgba(46,204,113,0.6);
-    }
-    .globe-labels {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 16px;
-      justify-content: center;
-    }
-    .country-chip {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      padding: 4px 14px;
-      border-radius: 30px;
-      font-size: 0.65rem;
-      cursor: pointer;
-      transition: 0.15s;
-      color: #8899bb;
-    }
-    .country-chip.active {
-      background: rgba(74,108,247,0.2);
-      border-color: #4a6cf7;
-      color: #b7c4e0;
-    }
-    .country-chip .status {
-      display: inline-block;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      margin-left: 4px;
-    }
-    .country-chip .status.active {
-      background: #2ecc71;
-    }
-    .country-chip .status.inactive {
-      background: #e74c5e;
-    }
+        /* Globe */
+        .globe-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            position: relative;
+        }
+        .globe {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1a3a5a, #0a1a2a);
+            border: 2px solid rgba(255,255,255,0.06);
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+            touch-action: none;
+            box-shadow: 0 0 60px rgba(74,108,247,0.06);
+        }
+        .globe:active {
+            cursor: grabbing;
+        }
+        .globe .dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.3s;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .globe .dot.active {
+            background: #e74c5e;
+            box-shadow: 0 0 20px rgba(231,76,94,0.5);
+        }
+        .globe .dot.active-own {
+            background: #2ecc71;
+            box-shadow: 0 0 20px rgba(46,204,113,0.5);
+            border-color: rgba(46,204,113,0.3);
+        }
+        .globe .dot.locked {
+            background: rgba(255,255,255,0.08);
+            box-shadow: none;
+            border-color: rgba(255,255,255,0.04);
+        }
+        .globe-labels {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+        .country-chip {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            transition: 0.15s;
+            color: #8899bb;
+            touch-action: manipulation;
+        }
+        .country-chip:active {
+            transform: scale(0.94);
+        }
+        .country-chip.active {
+            background: rgba(74,108,247,0.15);
+            border-color: #4a6cf7;
+            color: #b7c4e0;
+        }
+        .country-chip .status {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-left: 4px;
+        }
+        .country-chip .status.own {
+            background: #2ecc71;
+        }
+        .country-chip .status.active {
+            background: #e74c5e;
+        }
+        .country-chip .status.inactive {
+            background: rgba(255,255,255,0.1);
+        }
 
-    /* Stats grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .stat-item {
-      background: rgba(255,255,255,0.02);
-      border-radius: 12px;
-      padding: 10px 8px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.03);
-    }
-    .stat-item .num {
-      font-size: 1.1rem;
-      font-weight: 700;
-    }
-    .stat-item .lbl {
-      font-size: 0.6rem;
-      color: #6a7a92;
-      margin-top: 2px;
-    }
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+        .stat-item .num {
+            font-size: 1rem;
+            font-weight: 700;
+        }
+        .stat-item .lbl {
+            font-size: 0.55rem;
+            color: #6a7a92;
+            margin-top: 2px;
+        }
 
-    .scroll-x {
-      overflow-x: auto;
-      display: flex;
-      gap: 8px;
-      padding: 4px 0;
-      -webkit-overflow-scrolling: touch;
-    }
-    .scroll-x::-webkit-scrollbar {
-      height: 2px;
-    }
-    .scroll-x::-webkit-scrollbar-thumb {
-      background: #2a3345;
-      border-radius: 10px;
-    }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.75rem;
+        }
+        .detail-row .label {
+            color: #6a7a92;
+        }
+        .detail-row .value {
+            font-weight: 500;
+        }
 
-    @media (max-width: 420px) {
-      .biz-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 6px;
-      }
-      .globe {
-        width: 180px;
-        height: 180px;
-      }
-      .stats-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-  </style>
+        .toast {
+            position: fixed;
+            top: 60px;
+            left: 16px;
+            right: 16px;
+            max-width: 480px;
+            margin: 0 auto;
+            background: rgba(10,14,22,0.95);
+            backdrop-filter: blur(8px);
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #e8edf5;
+            font-size: 0.8rem;
+            z-index: 100;
+            animation: slideDown 0.3s ease forwards;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        }
+        @keyframes slideDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        @media (max-width: 420px) {
+            .biz-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .globe {
+                width: 180px;
+                height: 180px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .hud-title {
+                font-size: 0.75rem;
+            }
+        }
+    </style>
 </head>
 <body>
 <div id="app">
-  <!-- HUD -->
-  <div class="hud">
-    <div class="hud-left">
-      <div class="hud-balance">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-        <span id="totalBalance">0</span>
-      </div>
+    <!-- HUD -->
+    <div class="hud">
+        <div class="hud-left">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>
+            <span class="hud-title">Empire</span>
+            <span class="hud-level">Lv.<span id="playerLevel">1</span></span>
+        </div>
+        <div class="hud-balance">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+            <span id="totalBalance">0</span>
+        </div>
     </div>
-    <div class="hud-level">Lv.<span id="playerLevel">1</span></div>
-  </div>
 
-  <!-- PAGE 1: DASHBOARD -->
-  <div class="page active" id="pageDashboard">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <h3 style="font-size:1rem;font-weight:600;">📊 Dashboard</h3>
-      <span style="font-size:0.7rem;color:#6a7a92;">Today's Profit: <span id="todayProfit" style="color:#7bed9f;">+0</span></span>
+    <!-- PAGE 1: DASHBOARD -->
+    <div class="page active" id="pageDashboard">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:0.75rem;font-weight:600;color:#b7c4e0;">📊 Dashboard</span>
+            <span style="font-size:0.7rem;color:#6a7a92;">Total/s: <span id="totalIncomeDisplay" style="color:#f5d742;">0</span></span>
+        </div>
+        <div id="dashboardBusinesses"></div>
+        <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="btn-action btn-primary" id="unlockBizBtn">🔓 Unlock Business</button>
+            <button class="btn-action btn-gold" id="prestigeBtn">✨ Prestige</button>
+        </div>
     </div>
-    <div id="dashboardBusinesses"></div>
-    <div style="margin-top:12px;">
-      <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:#6a7a92;margin-bottom:4px;">
-        <span>Total Income/s</span>
-        <span id="totalIncomeDisplay" style="color:#f5d742;">0</span>
-      </div>
-      <div style="background:rgba(255,255,255,0.04);height:4px;border-radius:10px;overflow:hidden;">
-        <div id="incomeBar" style="height:100%;width:0%;background:linear-gradient(90deg,#f5b342,#f7d94a);border-radius:10px;transition:width 0.3s;"></div>
-      </div>
-    </div>
-    <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;">
-      <button class="btn-action btn-primary" id="unlockBizBtn">🔓 Unlock New Business</button>
-      <button class="btn-action" id="prestigeBtn" style="background:rgba(155,89,182,0.2);border-color:#8e44ad;">✨ Prestige</button>
-    </div>
-  </div>
 
-  <!-- PAGE 2: ALL BUSINESSES -->
-  <div class="page" id="pageBusinesses">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-      <h3 style="font-size:1rem;font-weight:600;">🏢 All Businesses</h3>
-      <span style="font-size:0.7rem;color:#6a7a92;">Owned: <span id="ownedCount">0</span></span>
+    <!-- PAGE 2: ALL BUSINESSES -->
+    <div class="page" id="pageBusinesses">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:0.75rem;font-weight:600;color:#b7c4e0;">🏢 All Businesses</span>
+            <span style="font-size:0.7rem;color:#6a7a92;">Owned: <span id="ownedCount">0</span></span>
+        </div>
+        <div class="biz-grid" id="businessGrid"></div>
     </div>
-    <div class="biz-grid" id="businessGrid"></div>
-  </div>
 
-  <!-- PAGE 3: GLOBE -->
-  <div class="page" id="pageGlobe">
-    <h3 style="font-size:1rem;font-weight:600;margin-bottom:8px;">🌍 Global Empire</h3>
-    <div class="globe-container">
-      <div class="globe" id="globe">
-        <!-- Dots will be rendered here -->
-      </div>
-      <div class="globe-labels" id="countryList"></div>
-      <div style="margin-top:12px;text-align:center;font-size:0.75rem;color:#6a7a92;">
-        <span id="selectedCountryInfo">Select a country to expand</span>
-      </div>
-      <button class="btn-action btn-success" id="expandCountryBtn" style="margin-top:8px;padding:8px 24px;">🚀 Start Business Here</button>
+    <!-- PAGE 3: GLOBE -->
+    <div class="page" id="pageGlobe">
+        <span style="font-size:0.75rem;font-weight:600;color:#b7c4e0;margin-bottom:8px;">🌍 Global Expansion</span>
+        <div class="globe-container">
+            <div class="globe" id="globe"></div>
+            <div class="globe-labels" id="countryList"></div>
+            <div style="margin-top:10px;text-align:center;font-size:0.75rem;color:#6a7a92;">
+                <span id="selectedCountryInfo">Select a country to expand</span>
+            </div>
+            <button class="btn-action btn-success" id="expandCountryBtn" style="margin-top:6px;padding:8px 28px;">🚀 Start Business</button>
+        </div>
     </div>
-  </div>
 
-  <!-- PAGE 4: STATISTICS -->
-  <div class="page" id="pageStats">
-    <h3 style="font-size:1rem;font-weight:600;margin-bottom:12px;">📈 Business Analytics</h3>
-    <div class="stats-grid" id="statsGrid"></div>
-    <div style="margin-top:12px;">
-      <div style="font-size:0.75rem;font-weight:600;margin-bottom:6px;">📋 Business Details</div>
-      <div id="businessDetails"></div>
+    <!-- PAGE 4: STATISTICS -->
+    <div class="page" id="pageStats">
+        <span style="font-size:0.75rem;font-weight:600;color:#b7c4e0;margin-bottom:10px;">📈 Business Analytics</span>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div style="margin-top:12px;">
+            <span style="font-size:0.7rem;font-weight:600;color:#b7c4e0;">📋 Detailed Report</span>
+            <div id="businessDetails" style="margin-top:6px;"></div>
+        </div>
     </div>
-  </div>
 
-  <!-- BOTTOM NAV -->
-  <div class="bottom-nav">
-    <button class="nav-btn active" data-page="pageDashboard">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      Dashboard
-    </button>
-    <button class="nav-btn" data-page="pageBusinesses">
-      <svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="1"/><path d="M8 8V4h8v4"/></svg>
-      Businesses
-    </button>
-    <button class="nav-btn" data-page="pageGlobe">
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
-      Globe
-    </button>
-    <button class="nav-btn" data-page="pageStats">
-      <svg viewBox="0 0 24 24"><path d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
-      Stats
-    </button>
-  </div>
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" data-page="pageDashboard">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Dashboard
+        </button>
+        <button class="nav-btn" data-page="pageBusinesses">
+            <svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="1"/><path d="M8 8V4h8v4"/></svg>
+            Businesses
+        </button>
+        <button class="nav-btn" data-page="pageGlobe">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            Globe
+        </button>
+        <button class="nav-btn" data-page="pageStats">
+            <svg viewBox="0 0 24 24"><path d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>
+            Stats
+        </button>
+    </div>
 </div>
 
 <script>
 (function(){
-  "use strict";
+    "use strict";
 
-  // ============ GAME STATE ============
-  const G = {
-    balance: 500,
-    level: 1,
-    xp: 0,
-    totalEarned: 0,
-    businesses: [],
-    employees: 0,
-    maxEmployees: 2,
-    prestigeMultiplier: 1,
-    countries: [],
-    activeCountry: 'india',
-    totalIncome: 0,
-    todayProfit: 0,
-    lastTick: Date.now(),
-  };
+    // ============ GAME STATE ============
+    const G = {
+        balance: 500,
+        level: 1,
+        xp: 0,
+        totalEarned: 0,
+        businesses: [],
+        employees: 0,
+        maxEmployees: 2,
+        prestigeMultiplier: 1,
+        countries: [],
+        activeCountry: 'india',
+        totalIncome: 0,
+        dailyProfit: 0,
+        lastTick: Date.now(),
+    };
 
-  // Business templates
-  const BIZ_TEMPLATES = [
-    { id: 'tea', name: 'Tea Stall', icon: '☕', baseIncome: 1.2, unlockCost: 0, level: 1, employees: 0 },
-    { id: 'restaurant', name: 'Restaurant', icon: '🍽️', baseIncome: 5, unlockCost: 800, level: 0, employees: 0 },
-    { id: 'cafe', name: 'Cafe', icon: '☕', baseIncome: 12, unlockCost: 2500, level: 0, employees: 0 },
-    { id: 'bakery', name: 'Bakery', icon: '🍞', baseIncome: 28, unlockCost: 6000, level: 0, employees: 0 },
-    { id: 'carwash', name: 'Car Wash', icon: '🚗', baseIncome: 60, unlockCost: 15000, level: 0, employees: 0 },
-    { id: 'grocery', name: 'Grocery Store', icon: '🛒', baseIncome: 130, unlockCost: 40000, level: 0, employees: 0 },
-    { id: 'hotel', name: 'Hotel', icon: '🏨', baseIncome: 300, unlockCost: 90000, level: 0, employees: 0 },
-    { id: 'mall', name: 'Mall', icon: '🏬', baseIncome: 700, unlockCost: 200000, level: 0, employees: 0 },
-    { id: 'cinema', name: 'Cinema', icon: '🎬', baseIncome: 1500, unlockCost: 450000, level: 0, employees: 0 },
-    { id: 'factory', name: 'Factory', icon: '🏭', baseIncome: 3400, unlockCost: 1000000, level: 0, employees: 0 },
-    { id: 'it', name: 'IT Company', icon: '💻', baseIncome: 7500, unlockCost: 2500000, level: 0, employees: 0 },
-    { id: 'airline', name: 'Airline', icon: '✈️', baseIncome: 18000, unlockCost: 6000000, level: 0, employees: 0 },
-    { id: 'space', name: 'Space Company', icon: '🚀', baseIncome: 45000, unlockCost: 15000000, level: 0, employees: 0 },
-  ];
+    // Business templates
+    const BIZ_TEMPLATES = [
+        { id: 'tea', name: 'Tea Stall', icon: '☕', baseIncome: 1.2, unlockCost: 0, level: 1, employees: 0 },
+        { id: 'restaurant', name: 'Restaurant', icon: '🍽️', baseIncome: 5, unlockCost: 800, level: 0, employees: 0 },
+        { id: 'cafe', name: 'Cafe', icon: '☕', baseIncome: 12, unlockCost: 2500, level: 0, employees: 0 },
+        { id: 'bakery', name: 'Bakery', icon: '🍞', baseIncome: 28, unlockCost: 6000, level: 0, employees: 0 },
+        { id: 'carwash', name: 'Car Wash', icon: '🚗', baseIncome: 60, unlockCost: 15000, level: 0, employees: 0 },
+        { id: 'grocery', name: 'Grocery Store', icon: '🛒', baseIncome: 130, unlockCost: 40000, level: 0, employees: 0 },
+        { id: 'hotel', name: 'Hotel', icon: '🏨', baseIncome: 300, unlockCost: 90000, level: 0, employees: 0 },
+        { id: 'mall', name: 'Mall', icon: '🏬', baseIncome: 700, unlockCost: 200000, level: 0, employees: 0 },
+        { id: 'cinema', name: 'Cinema', icon: '🎬', baseIncome: 1500, unlockCost: 450000, level: 0, employees: 0 },
+        { id: 'factory', name: 'Factory', icon: '🏭', baseIncome: 3400, unlockCost: 1000000, level: 0, employees: 0 },
+        { id: 'it', name: 'IT Company', icon: '💻', baseIncome: 7500, unlockCost: 2500000, level: 0, employees: 0 },
+        { id: 'airline', name: 'Airline', icon: '✈️', baseIncome: 18000, unlockCost: 6000000, level: 0, employees: 0 },
+        { id: 'space', name: 'Space Company', icon: '🚀', baseIncome: 45000, unlockCost: 15000000, level: 0, employees: 0 },
+    ];
 
-  // Countries
-  const COUNTRIES = [
-    { id: 'india', name: 'India', x: 50, y: 55, active: true },
-    { id: 'usa', name: 'USA', x: 25, y: 40, active: false },
-    { id: 'uk', name: 'UK', x: 45, y: 35, active: false },
-    { id: 'japan', name: 'Japan', x: 78, y: 38, active: false },
-    { id: 'brazil', name: 'Brazil', x: 40, y: 68, active: false },
-    { id: 'australia', name: 'Australia', x: 80, y: 78, active: false },
-    { id: 'germany', name: 'Germany', x: 48, y: 30, active: false },
-    { id: 'uae', name: 'UAE', x: 55, y: 45, active: false },
-  ];
+    // Countries
+    const COUNTRIES = [
+        { id: 'india', name: 'India', x: 50, y: 55, active: true },
+        { id: 'usa', name: 'USA', x: 25, y: 40, active: false },
+        { id: 'uk', name: 'UK', x: 45, y: 35, active: false },
+        { id: 'japan', name: 'Japan', x: 78, y: 38, active: false },
+        { id: 'brazil', name: 'Brazil', x: 40, y: 68, active: false },
+        { id: 'australia', name: 'Australia', x: 80, y: 78, active: false },
+        { id: 'germany', name: 'Germany', x: 48, y: 30, active: false },
+        { id: 'uae', name: 'UAE', x: 55, y: 45, active: false },
+        { id: 'singapore', name: 'Singapore', x: 70, y: 48, active: false },
+        { id: 'canada', name: 'Canada', x: 22, y: 30, active: false },
+    ];
 
-  // ============ HELPERS ============
-  function getBusinessIncome(biz) {
-    if (!biz || biz.level === 0) return 0;
-    let base = biz.baseIncome * (1 + biz.level * 0.4) * G.prestigeMultiplier;
-    base *= (1 + biz.employees * 0.12);
-    return base;
-  }
-
-  function getTotalIncome() {
-    let sum = 0;
-    for (let b of G.businesses) {
-      if (b.level > 0) sum += getBusinessIncome(b);
-    }
-    G.totalIncome = sum;
-    return sum;
-  }
-
-  function getOwnedCount() {
-    return G.businesses.filter(b => b.level > 0).length;
-  }
-
-  function getUnlockedCount() {
-    return G.businesses.filter(b => b.level > 0).length;
-  }
-
-  function getNextUnlockable() {
-    return G.businesses.find(b => b.level === 0);
-  }
-
-  // ============ CORE FUNCTIONS ============
-  function unlockBusiness(id) {
-    const biz = G.businesses.find(b => b.id === id);
-    if (!biz || biz.level > 0) return false;
-    if (G.balance < biz.unlockCost) return false;
-    G.balance -= biz.unlockCost;
-    biz.level = 1;
-    G.xp += 10;
-    checkLevelUp();
-    updateUI();
-    addNotification('✅ Unlocked ' + biz.name + '!');
-    return true;
-  }
-
-  function upgradeBusiness(id) {
-    const biz = G.businesses.find(b => b.id === id);
-    if (!biz || biz.level === 0) return false;
-    const cost = Math.floor(50 + biz.level * 20);
-    if (G.balance < cost) return false;
-    G.balance -= cost;
-    biz.level += 1;
-    G.xp += 5;
-    checkLevelUp();
-    updateUI();
-    addNotification('⬆ Upgraded ' + biz.name + ' to Lv.' + biz.level);
-    return true;
-  }
-
-  function hireEmployee(id) {
-    const biz = G.businesses.find(b => b.id === id);
-    if (!biz || biz.level === 0) return false;
-    const cost = 40 + biz.employees * 25;
-    if (G.balance < cost) return false;
-    if (G.employees >= G.maxEmployees) {
-      addNotification('⚠️ Max employees reached! Upgrade level to hire more.');
-      return false;
-    }
-    G.balance -= cost;
-    biz.employees += 1;
-    G.employees += 1;
-    G.xp += 3;
-    checkLevelUp();
-    updateUI();
-    addNotification('👨‍💼 Hired employee for ' + biz.name);
-    return true;
-  }
-
-  function expandToCountry(countryId) {
-    const country = COUNTRIES.find(c => c.id === countryId);
-    if (!country || country.active) return false;
-    const cost = 5000 + (COUNTRIES.filter(c => c.active).length * 3000);
-    if (G.balance < cost) return false;
-    G.balance -= cost;
-    country.active = true;
-    addNotification('🌍 Expanded to ' + country.name + '!');
-    updateUI();
-    return true;
-  }
-
-  function checkLevelUp() {
-    const needed = G.level * 20 + 30;
-    if (G.xp >= needed) {
-      G.level++;
-      G.xp = 0;
-      G.maxEmployees = 2 + Math.floor(G.level / 2);
-      addNotification('🎉 Level Up! You are now Level ' + G.level);
-      updateUI();
-    }
-  }
-
-  function prestige() {
-    if (getUnlockedCount() < 3) return false;
-    if (G.balance < 10000) return false;
-    G.balance = 0;
-    G.prestigeMultiplier += 0.5;
-    for (let b of G.businesses) {
-      b.level = 0;
-      b.employees = 0;
-    }
-    G.employees = 0;
-    G.businesses[0].level = 1;
-    G.totalEarned = 0;
-    addNotification('✨ Prestige! Multiplier now ' + G.prestigeMultiplier.toFixed(1) + 'x');
-    updateUI();
-    return true;
-  }
-
-  // ============ NOTIFICATIONS ============
-  let notifications = [];
-
-  function addNotification(text) {
-    notifications.unshift({ text, time: Date.now() });
-    if (notifications.length > 20) notifications.pop();
-    // Show toast
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed; top: 60px; left: 16px; right: 16px; max-width: 480px;
-      margin: 0 auto; background: rgba(10,14,22,0.95); backdrop-filter: blur(8px);
-      padding: 10px 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.06);
-      color: #e8edf5; font-size: 0.8rem; z-index: 100;
-      animation: slideDown 0.3s ease forwards;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-    `;
-    toast.textContent = text;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      toast.style.animation = 'slideUp 0.3s ease forwards';
-      setTimeout(() => toast.remove(), 400);
-    }, 2500);
-  }
-
-  // ============ UI RENDER ============
-  function updateUI() {
-    document.getElementById('totalBalance').textContent = Math.floor(G.balance);
-    document.getElementById('playerLevel').textContent = G.level;
-    document.getElementById('ownedCount').textContent = getUnlockedCount();
-    document.getElementById('totalIncomeDisplay').textContent = getTotalIncome().toFixed(1);
-    
-    const totalInc = getTotalIncome();
-    const maxInc = 100;
-    document.getElementById('incomeBar').style.width = Math.min(100, (totalInc / maxInc) * 100) + '%';
-    
-    const profit = totalInc * 0.3;
-    G.todayProfit += profit * 0.1;
-    document.getElementById('todayProfit').textContent = (G.todayProfit > 0 ? '+' : '') + G.todayProfit.toFixed(0);
-    
-    renderDashboard();
-    renderBusinessGrid();
-    renderGlobe();
-    renderStats();
-  }
-
-  function renderDashboard() {
-    const container = document.getElementById('dashboardBusinesses');
-    let html = '';
-    const active = G.businesses.filter(b => b.level > 0);
-    if (active.length === 0) {
-      html = '<div class="card" style="text-align:center;color:#6a7a92;padding:20px;">No businesses yet. Unlock your first business!</div>';
-    } else {
-      for (let b of active) {
-        const inc = getBusinessIncome(b);
-        html += `
-          <div class="card">
-            <div class="card-row">
-              <div>
-                <span style="font-size:1.2rem;margin-right:6px;">${b.icon}</span>
-                <span style="font-weight:600;">${b.name}</span>
-                <span style="font-size:0.6rem;color:#6a7a92;margin-left:6px;">Lv.${b.level}</span>
-              </div>
-              <div style="text-align:right;">
-                <div style="color:#f5d742;font-weight:600;">+${inc.toFixed(1)}/s</div>
-                <div style="font-size:0.6rem;color:#6a7a92;">${b.employees} staff</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
-              <button class="btn-action" onclick="window.upgradeBiz('${b.id}')">⬆ Upgrade (${Math.floor(50 + b.level * 20)})</button>
-              <button class="btn-action" onclick="window.hireBiz('${b.id}')">👤 Hire (${40 + b.employees * 25})</button>
-            </div>
-          </div>
-        `;
-      }
-    }
-    container.innerHTML = html;
-  }
-
-  function renderBusinessGrid() {
-    const container = document.getElementById('businessGrid');
-    let html = '';
-    for (let b of G.businesses) {
-      const locked = b.level === 0;
-      const inc = locked ? 0 : getBusinessIncome(b);
-      html += `
-        <div class="biz-card ${locked ? 'locked' : ''}">
-          <div class="biz-icon">${b.icon}</div>
-          <div class="biz-name">${b.name}</div>
-          <div class="biz-income">${locked ? '🔒 ' + b.unlockCost : '+' + inc.toFixed(1) + '/s'}</div>
-          <div class="biz-level">${locked ? 'Locked' : 'Lv.' + b.level + ' · ' + b.employees + ' staff'}</div>
-          ${locked ? `<button class="btn-action btn-primary" style="margin-top:4px;width:100%;" onclick="window.unlockBiz('${b.id}')">Unlock</button>` : 
-          `<div style="display:flex;gap:4px;margin-top:4px;justify-content:center;flex-wrap:wrap;">
-            <button class="btn-action" style="font-size:0.6rem;padding:3px 10px;" onclick="window.upgradeBiz('${b.id}')">⬆ ${Math.floor(50 + b.level * 20)}</button>
-            <button class="btn-action" style="font-size:0.6rem;padding:3px 10px;" onclick="window.hireBiz('${b.id}')">👤 ${40 + b.employees * 25}</button>
-          </div>`}
-        </div>
-      `;
-    }
-    container.innerHTML = html;
-  }
-
-  function renderGlobe() {
-    const globe = document.getElementById('globe');
-    globe.innerHTML = '';
-    for (let c of COUNTRIES) {
-      if (c.active) {
-        const dot = document.createElement('div');
-        dot.className = 'dot active';
-        dot.style.left = c.x + '%';
-        dot.style.top = c.y + '%';
-        dot.title = c.name;
-        globe.appendChild(dot);
-      }
-    }
-    // Add a few inactive dots
-    for (let c of COUNTRIES) {
-      if (!c.active) {
-        const dot = document.createElement('div');
-        dot.className = 'dot';
-        dot.style.left = c.x + '%';
-        dot.style.top = c.y + '%';
-        dot.style.opacity = '0.3';
-        dot.title = c.name + ' (locked)';
-        globe.appendChild(dot);
-      }
+    // ============ HELPERS ============
+    function getBusinessIncome(biz) {
+        if (!biz || biz.level === 0) return 0;
+        let base = biz.baseIncome * (1 + biz.level * 0.35) * G.prestigeMultiplier;
+        base *= (1 + biz.employees * 0.1);
+        return base;
     }
 
-    // Country list
-    const list = document.getElementById('countryList');
-    let html = '';
-    for (let c of COUNTRIES) {
-      const active = c.active ? 'active' : '';
-      const status = c.active ? 'active' : 'inactive';
-      html += `
-        <div class="country-chip ${active}" data-country="${c.id}" onclick="window.selectCountry('${c.id}')">
-          ${c.name}
-          <span class="status ${status}"></span>
-        </div>
-      `;
-    }
-    list.innerHTML = html;
-    
-    // Update info
-    const country = COUNTRIES.find(c => c.id === G.activeCountry);
-    if (country) {
-      document.getElementById('selectedCountryInfo').textContent = 
-        country.active ? '✅ ' + country.name + ' - Business active' : '🌍 Start your business in ' + country.name;
-    }
-  }
-
-  function renderStats() {
-    const grid = document.getElementById('statsGrid');
-    const totalInc = getTotalIncome();
-    const owned = getUnlockedCount();
-    const totalEmployees = G.businesses.reduce((sum, b) => sum + b.employees, 0);
-    grid.innerHTML = `
-      <div class="stat-item"><div class="num">${Math.floor(G.totalEarned)}</div><div class="lbl">Total Earned</div></div>
-      <div class="stat-item"><div class="num">${owned}</div><div class="lbl">Businesses</div></div>
-      <div class="stat-item"><div class="num">${totalEmployees}</div><div class="lbl">Employees</div></div>
-      <div class="stat-item"><div class="num">${G.prestigeMultiplier.toFixed(1)}x</div><div class="lbl">Multiplier</div></div>
-      <div class="stat-item"><div class="num">${COUNTRIES.filter(c=>c.active).length}</div><div class="lbl">Countries</div></div>
-      <div class="stat-item"><div class="num">${G.level}</div><div class="lbl">Level</div></div>
-    `;
-
-    // Business details
-    const details = document.getElementById('businessDetails');
-    let html = '';
-    for (let b of G.businesses) {
-      if (b.level > 0) {
-        const inc = getBusinessIncome(b);
-        html += `
-          <div class="card" style="padding:8px 12px;margin-bottom:4px;">
-            <div class="card-row">
-              <span>${b.icon} ${b.name} (Lv.${b.level})</span>
-              <span style="color:#f5d742;">+${inc.toFixed(1)}/s</span>
-            </div>
-            <div style="font-size:0.65rem;color:#6a7a92;">${b.employees} employees · Cost: ${Math.floor(50 + b.level * 20)} to upgrade</div>
-          </div>
-        `;
-      }
-    }
-    details.innerHTML = html || '<div style="color:#6a7a92;font-size:0.8rem;">No active businesses yet.</div>';
-  }
-
-  // ============ GLOBAL FUNCTIONS ============
-  window.unlockBiz = function(id) {
-    unlockBusiness(id);
-  };
-  window.upgradeBiz = function(id) {
-    upgradeBusiness(id);
-  };
-  window.hireBiz = function(id) {
-    hireEmployee(id);
-  };
-  window.selectCountry = function(id) {
-    G.activeCountry = id;
-    renderGlobe();
-  };
-
-  // ============ GAME LOOP ============
-  let lastTime = 0;
-  function gameLoop(time) {
-    const delta = Math.min(0.05, (time - lastTime) / 1000);
-    lastTime = time;
-
-    // Passive income
-    const income = getTotalIncome();
-    const earned = income * delta * 0.3;
-    G.balance += earned;
-    G.totalEarned += earned;
-    G.todayProfit += earned;
-
-    // Auto-save
-    if (Math.random() < 0.01) saveGame();
-
-    // Update UI every 500ms
-    if (Math.floor(time / 500) > Math.floor((time - delta * 1000) / 500)) {
-      updateUI();
-    }
-
-    requestAnimationFrame(gameLoop);
-  }
-
-  // ============ SAVE / LOAD ============
-  function saveGame() {
-    try {
-      const data = {
-        balance: G.balance,
-        level: G.level,
-        xp: G.xp,
-        totalEarned: G.totalEarned,
-        businesses: G.businesses,
-        employees: G.employees,
-        maxEmployees: G.maxEmployees,
-        prestigeMultiplier: G.prestigeMultiplier,
-        countries: COUNTRIES,
-        totalIncome: G.totalIncome,
-        todayProfit: G.todayProfit,
-        lastSave: Date.now()
-      };
-      localStorage.setItem('stardustCEO_v2', JSON.stringify(data));
-    } catch(e) {}
-  }
-
-  function loadGame() {
-    try {
-      const raw = localStorage.getItem('stardustCEO_v2');
-      if (!raw) return false;
-      const data = JSON.parse(raw);
-      G.balance = data.balance || 500;
-      G.level = data.level || 1;
-      G.xp = data.xp || 0;
-      G.totalEarned = data.totalEarned || 0;
-      G.employees = data.employees || 0;
-      G.maxEmployees = data.maxEmployees || 2;
-      G.prestigeMultiplier = data.prestigeMultiplier || 1;
-      G.todayProfit = data.todayProfit || 0;
-      if (data.businesses) {
-        for (let i = 0; i < G.businesses.length && i < data.businesses.length; i++) {
-          G.businesses[i].level = data.businesses[i].level || 0;
-          G.businesses[i].employees = data.businesses[i].employees || 0;
+    function getTotalIncome() {
+        let sum = 0;
+        for (let b of G.businesses) {
+            if (b.level > 0) sum += getBusinessIncome(b);
         }
-      }
-      if (data.countries) {
-        for (let i = 0; i < COUNTRIES.length && i < data.countries.length; i++) {
-          COUNTRIES[i].active = data.countries[i].active || false;
+        G.totalIncome = sum;
+        return sum;
+    }
+
+    function getOwnedCount() {
+        return G.businesses.filter(b => b.level > 0).length;
+    }
+
+    function getNextUnlockable() {
+        return G.businesses.find(b => b.level === 0);
+    }
+
+    function getTotalEmployees() {
+        return G.businesses.reduce((sum, b) => sum + b.employees, 0);
+    }
+
+    // ============ CORE FUNCTIONS ============
+    function unlockBusiness(id) {
+        const biz = G.businesses.find(b => b.id === id);
+        if (!biz || biz.level > 0) return false;
+        if (G.balance < biz.unlockCost) {
+            showToast('⚠️ Not enough funds! Need ₹' + biz.unlockCost);
+            return false;
         }
-      }
-      return true;
-    } catch(e) { return false; }
-  }
-
-  // ============ INIT ============
-  function init() {
-    // Initialize businesses
-    G.businesses = BIZ_TEMPLATES.map(t => ({
-      ...t,
-      level: t.id === 'tea' ? 1 : 0,
-      employees: 0
-    }));
-
-    loadGame();
-    
-    // Navigation
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(this.dataset.page).classList.add('active');
+        G.balance -= biz.unlockCost;
+        biz.level = 1;
+        G.xp += 10;
+        checkLevelUp();
         updateUI();
-      });
-    });
+        showToast('✅ Unlocked ' + biz.name + '!');
+        return true;
+    }
 
-    // Unlock button
-    document.getElementById('unlockBizBtn').addEventListener('click', function() {
-      const next = getNextUnlockable();
-      if (!next) {
-        addNotification('✅ All businesses unlocked!');
-        return;
-      }
-      unlockBusiness(next.id);
-    });
+    function upgradeBusiness(id) {
+        const biz = G.businesses.find(b => b.id === id);
+        if (!biz || biz.level === 0) return false;
+        const cost = Math.floor(40 + biz.level * 18);
+        if (G.balance < cost) {
+            showToast('⚠️ Need ₹' + cost + ' to upgrade');
+            return false;
+        }
+        G.balance -= cost;
+        biz.level += 1;
+        G.xp += 5;
+        checkLevelUp();
+        updateUI();
+        showToast('⬆ ' + biz.name + ' upgraded to Lv.' + biz.level);
+        return true;
+    }
 
-    // Prestige
-    document.getElementById('prestigeBtn').addEventListener('click', function() {
-      if (getUnlockedCount() < 3) {
-        addNotification('⚠️ Need at least 3 businesses for prestige');
-        return;
-      }
-      if (G.balance < 10000) {
-        addNotification('⚠️ Need ₹10,000 for prestige');
-        return;
-      }
-      prestige();
-    });
+    function hireEmployee(id) {
+        const biz = G.businesses.find(b => b.id === id);
+        if (!biz || biz.level === 0) return false;
+        const cost = 35 + biz.employees * 20;
+        if (G.balance < cost) {
+            showToast('⚠️ Need ₹' + cost + ' to hire');
+            return false;
+        }
+        const totalEmp = getTotalEmployees();
+        if (totalEmp >= G.maxEmployees) {
+            showToast('⚠️ Max employees reached! Upgrade level to hire more.');
+            return false;
+        }
+        G.balance -= cost;
+        biz.employees += 1;
+        G.xp += 3;
+        checkLevelUp();
+        updateUI();
+        showToast('👨‍💼 Hired employee for ' + biz.name);
+        return true;
+    }
 
-    // Expand country
-    document.getElementById('expandCountryBtn').addEventListener('click', function() {
-      const country = COUNTRIES.find(c => c.id === G.activeCountry);
-      if (!country) return;
-      if (country.active) {
-        addNotification('✅ Business already active in ' + country.name);
-        return;
-      }
-      expandToCountry(G.activeCountry);
-    });
+    function expandToCountry(countryId) {
+        const country = COUNTRIES.find(c => c.id === countryId);
+        if (!country || country.active) return false;
+        const cost = 5000 + (COUNTRIES.filter(c => c.active).length * 4000);
+        if (G.balance < cost) {
+            showToast('⚠️ Need ₹' + cost + ' to expand to ' + country.name);
+            return false;
+        }
+        G.balance -= cost;
+        country.active = true;
+        showToast('🌍 Expanded to ' + country.name + '!');
+        updateUI();
+        return true;
+    }
 
-    // Auto save
-    setInterval(saveGame, 5000);
+    function checkLevelUp() {
+        const needed = G.level * 18 + 25;
+        if (G.xp >= needed) {
+            G.level++;
+            G.xp = 0;
+            G.maxEmployees = 2 + Math.floor(G.level / 2);
+            showToast('🎉 Level Up! You are now Level ' + G.level);
+            updateUI();
+        }
+    }
 
-    // Visibility
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) saveGame();
-      else { loadGame(); updateUI(); }
-    });
+    function prestige() {
+        if (getOwnedCount() < 3) {
+            showToast('⚠️ Need at least 3 businesses for prestige');
+            return false;
+        }
+        if (G.balance < 10000) {
+            showToast('⚠️ Need ₹10,000 for prestige');
+            return false;
+        }
+        G.balance = 0;
+        G.prestigeMultiplier += 0.5;
+        for (let b of G.businesses) {
+            b.level = 0;
+            b.employees = 0;
+        }
+        G.businesses[0].level = 1;
+        G.totalEarned = 0;
+        G.employees = 0;
+        showToast('✨ Prestige! Multiplier now ' + G.prestigeMultiplier.toFixed(1) + 'x');
+        updateUI();
+        return true;
+    }
 
-    updateUI();
-    requestAnimationFrame(gameLoop);
-  }
+    // ============ TOAST ============
+    let toastTimeout = null;
 
-  init();
+    function showToast(text) {
+        const existing = document.querySelector('.toast');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = text;
+        document.body.appendChild(toast);
+        clearTimeout(toastTimeout);
+        toastTimeout = setTimeout(() => {
+            toast.style.animation = 'slideUp 0.3s ease forwards';
+            setTimeout(() => toast.remove(), 400);
+        }, 2500);
+    }
+
+    // ============ UI RENDER ============
+    function updateUI() {
+        document.getElementById('totalBalance').textContent = Math.floor(G.balance);
+        document.getElementById('playerLevel').textContent = G.level;
+        document.getElementById('ownedCount').textContent = getOwnedCount();
+        const totalInc = getTotalIncome();
+        document.getElementById('totalIncomeDisplay').textContent = totalInc.toFixed(1);
+        renderDashboard();
+        renderBusinessGrid();
+        renderGlobe();
+        renderStats();
+    }
+
+    function renderDashboard() {
+        const container = document.getElementById('dashboardBusinesses');
+        let html = '';
+        const active = G.businesses.filter(b => b.level > 0);
+        if (active.length === 0) {
+            html = '<div class="card" style="text-align:center;color:#6a7a92;padding:20px;">No businesses yet. Unlock your first business!</div>';
+        } else {
+            for (let b of active) {
+                const inc = getBusinessIncome(b);
+                const upgCost = Math.floor(40 + b.level * 18);
+                const hireCost = 35 + b.employees * 20;
+                html += `
+                    <div class="card">
+                        <div class="card-row">
+                            <div>
+                                <span class="biz-icon">${b.icon}</span>
+                                <span style="font-weight:600;">${b.name}</span>
+                                <span style="font-size:0.6rem;color:#6a7a92;margin-left:4px;">Lv.${b.level}</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="color:#f5d742;font-weight:600;">+${inc.toFixed(1)}/s</div>
+                                <div style="font-size:0.6rem;color:#6a7a92;">${b.employees} staff</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;">
+                            <button class="btn-action" onclick="window.upgradeBiz('${b.id}')">⬆ Upgrade (${upgCost})</button>
+                            <button class="btn-action" onclick="window.hireBiz('${b.id}')">👤 Hire (${hireCost})</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        container.innerHTML = html;
+    }
+
+    function renderBusinessGrid() {
+        const container = document.getElementById('businessGrid');
+        let html = '';
+        for (let b of G.businesses) {
+            const locked = b.level === 0;
+            const inc = locked ? 0 : getBusinessIncome(b);
+            const upgCost = locked ? 0 : Math.floor(40 + b.level * 18);
+            const hireCost = locked ? 0 : 35 + b.employees * 20;
+            html += `
+                <div class="biz-card ${locked ? 'locked' : ''}">
+                    <div class="biz-icon">${b.icon}</div>
+                    <div class="biz-name">${b.name}</div>
+                    <div class="biz-income">${locked ? '🔒' : '+' + inc.toFixed(1) + '/s'}</div>
+                    <div class="biz-level">${locked ? 'Locked' : 'Lv.' + b.level + ' · ' + b.employees + ' staff'}</div>
+                    ${locked ? `<div class="biz-cost">₹${b.unlockCost}</div>` : ''}
+                    ${locked ? 
+                        `<button class="btn-action btn-primary" style="margin-top:4px;width:100%;" onclick="window.unlockBiz('${b.id}')">Unlock</button>` : 
+                        `<div style="display:flex;gap:4px;margin-top:4px;justify-content:center;flex-wrap:wrap;">
+                            <button class="btn-action" style="font-size:0.6rem;padding:3px 8px;" onclick="window.upgradeBiz('${b.id}')">⬆ ${upgCost}</button>
+                            <button class="btn-action" style="font-size:0.6rem;padding:3px 8px;" onclick="window.hireBiz('${b.id}')">👤 ${hireCost}</button>
+                        </div>`
+                    }
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    }
+
+    function renderGlobe() {
+        const globe = document.getElementById('globe');
+        globe.innerHTML = '';
+        for (let c of COUNTRIES) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            if (c.active) {
+                dot.classList.add('active-own');
+            } else {
+                dot.classList.add('locked');
+            }
+            dot.style.left = c.x + '%';
+            dot.style.top = c.y + '%';
+            dot.title = c.name + (c.active ? ' ✅' : ' 🔒');
+            globe.appendChild(dot);
+        }
+
+        // Country list
+        const list = document.getElementById('countryList');
+        let html = '';
+        for (let c of COUNTRIES) {
+            const isActive = c.id === G.activeCountry ? 'active' : '';
+            const status = c.active ? 'own' : 'inactive';
+            html += `
+                <div class="country-chip ${isActive}" data-country="${c.id}" onclick="window.selectCountry('${c.id}')">
+                    ${c.name}
+                    <span class="status ${status}"></span>
+                </div>
+            `;
+        }
+        list.innerHTML = html;
+
+        // Update info
+        const country = COUNTRIES.find(c => c.id === G.activeCountry);
+        if (country) {
+            document.getElementById('selectedCountryInfo').textContent =
+                country.active ? '✅ Business active in ' + country.name : '🌍 Start your business in ' + country.name;
+            document.getElementById('expandCountryBtn').style.display = country.active ? 'none' : 'inline-block';
+        }
+    }
+
+    function renderStats() {
+        const grid = document.getElementById('statsGrid');
+        const totalInc = getTotalIncome();
+        const owned = getOwnedCount();
+        const totalEmp = getTotalEmployees();
+        const activeCountries = COUNTRIES.filter(c => c.active).length;
+        grid.innerHTML = `
+            <div class="stat-item"><div class="num">₹${Math.floor(G.totalEarned)}</div><div class="lbl">Total Earned</div></div>
+            <div class="stat-item"><div class="num">${owned}</div><div class="lbl">Businesses</div></div>
+            <div class="stat-item"><div class="num">${totalEmp}</div><div class="lbl">Employees</div></div>
+            <div class="stat-item"><div class="num">${G.prestigeMultiplier.toFixed(1)}x</div><div class="lbl">Multiplier</div></div>
+            <div class="stat-item"><div class="num">${activeCountries}</div><div class="lbl">Countries</div></div>
+            <div class="stat-item"><div class="num">${G.level}</div><div class="lbl">Level</div></div>
+        `;
+
+        // Business details
+        const details = document.getElementById('businessDetails');
+        let html = '';
+        let totalIncAll = 0;
+        for (let b of G.businesses) {
+            if (b.level > 0) {
+                const inc = getBusinessIncome(b);
+                totalIncAll += inc;
+                html += `
+                    <div class="detail-row">
+                        <span class="label">${b.icon} ${b.name} (Lv.${b.level})</span>
+                        <span class="value" style="color:#f5d742;">+${inc.toFixed(1)}/s</span>
+                    </div>
+                `;
+            }
+        }
+        if (html) {
+            html = `<div class="detail-row"><span class="label">💰 Total Income</span><span class="value" style="color:#f5d742;">+${totalIncAll.toFixed(1)}/s</span></div>` + html;
+            html += `<div class="detail-row"><span class="label">👨‍💼 Total Staff</span><span class="value">${getTotalEmployees()}</span></div>`;
+            html += `<div class="detail-row"><span class="label">🌍 Active Countries</span><span class="value">${COUNTRIES.filter(c=>c.active).length}</span></div>`;
+            html += `<div class="detail-row"><span class="label">📈 Prestige Multiplier</span><span class="value">${G.prestigeMultiplier.toFixed(1)}x</span></div>`;
+        } else {
+            html = '<div style="color:#6a7a92;font-size:0.75rem;">No active businesses yet.</div>';
+        }
+        details.innerHTML = html;
+    }
+
+    // ============ GLOBAL FUNCTIONS ============
+    window.unlockBiz = function(id) { unlockBusiness(id); };
+    window.upgradeBiz = function(id) { upgradeBusiness(id); };
+    window.hireBiz = function(id) { hireEmployee(id); };
+    window.selectCountry = function(id) {
+        G.activeCountry = id;
+        renderGlobe();
+    };
+
+    // ============ GAME LOOP ============
+    let lastTime = 0;
+    let updateCounter = 0;
+
+    function gameLoop(time) {
+        const delta = Math.min(0.05, (time - lastTime) / 1000);
+        lastTime = time;
+
+        // Passive income
+        const income = getTotalIncome();
+        const earned = income * delta * 0.3;
+        G.balance += earned;
+        G.totalEarned += earned;
+        G.dailyProfit += earned;
+
+        // Update UI every 500ms
+        updateCounter += delta;
+        if (updateCounter >= 0.5) {
+            updateCounter = 0;
+            updateUI();
+        }
+
+        requestAnimationFrame(gameLoop);
+    }
+
+    // ============ SAVE / LOAD ============
+    function saveGame() {
+        try {
+            const data = {
+                balance: G.balance,
+                level: G.level,
+                xp: G.xp,
+                totalEarned: G.totalEarned,
+                businesses: G.businesses.map(b => ({ id: b.id, level: b.level, employees: b.employees })),
+                prestigeMultiplier: G.prestigeMultiplier,
+                countries: COUNTRIES.map(c => ({ id: c.id, active: c.active })),
+                maxEmployees: G.maxEmployees,
+                dailyProfit: G.dailyProfit,
+                lastSave: Date.now()
+            };
+            localStorage.setItem('stardustCEO_v3', JSON.stringify(data));
+        } catch (e) {}
+    }
+
+    function loadGame() {
+        try {
+            const raw = localStorage.getItem('stardustCEO_v3');
+            if (!raw) return false;
+            const data = JSON.parse(raw);
+            G.balance = data.balance || 500;
+            G.level = data.level || 1;
+            G.xp = data.xp || 0;
+            G.totalEarned = data.totalEarned || 0;
+            G.prestigeMultiplier = data.prestigeMultiplier || 1;
+            G.maxEmployees = data.maxEmployees || 2;
+            G.dailyProfit = data.dailyProfit || 0;
+            if (data.businesses) {
+                for (let d of data.businesses) {
+                    const biz = G.businesses.find(b => b.id === d.id);
+                    if (biz) {
+                        biz.level = d.level || 0;
+                        biz.employees = d.employees || 0;
+                    }
+                }
+            }
+            if (data.countries) {
+                for (let d of data.countries) {
+                    const c = COUNTRIES.find(c => c.id === d.id);
+                    if (c) c.active = d.active || false;
+                }
+            }
+            return true;
+        } catch (e) { return false; }
+    }
+
+    // ============ INIT ============
+    function init() {
+        // Initialize businesses
+        G.businesses = BIZ_TEMPLATES.map(t => ({
+            ...t,
+            level: t.id === 'tea' ? 1 : 0,
+            employees: 0
+        }));
+
+        loadGame();
+
+        // Navigation
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(this.dataset.page).classList.add('active');
+                updateUI();
+            });
+        });
+
+        // Unlock button
+        document.getElementById('unlockBizBtn').addEventListener('click', function() {
+            const next = getNextUnlockable();
+            if (!next) {
+                showToast('✅ All businesses unlocked!');
+                return;
+            }
+            unlockBusiness(next.id);
+        });
+
+        // Prestige
+        document.getElementById('prestigeBtn').addEventListener('click', function() {
+            prestige();
+        });
+
+        // Expand country
+        document.getElementById('expandCountryBtn').addEventListener('click', function() {
+            const country = COUNTRIES.find(c => c.id === G.activeCountry);
+            if (!country) return;
+            if (country.active) {
+                showToast('✅ Business already active in ' + country.name);
+                return;
+            }
+            expandToCountry(G.activeCountry);
+        });
+
+        // Auto save
+        setInterval(saveGame, 5000);
+
+        // Visibility
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) saveGame();
+            else { loadGame(); updateUI(); }
+        });
+
+        updateUI();
+        requestAnimationFrame(gameLoop);
+    }
+
+    init();
 })();
 </script>
 </body>

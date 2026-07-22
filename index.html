@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Stardust Business Tycoon</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    body {
+      background: #0c0e14;
+      color: #f0f3fa;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 0 70px 0;
+      overflow-x: hidden;
+    }
+    #app {
+      max-width: 480px;
+      width: 100%;
+      background: #13171f;
+      border-radius: 32px 32px 0 0;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      min-height: 95vh;
+      position: relative;
+      padding: 16px 16px 80px 16px;
+      overflow-y: auto;
+      transition: background 0.2s;
+    }
+    /* scrollbar */
+    #app::-webkit-scrollbar { width: 4px; }
+    #app::-webkit-scrollbar-track { background: #1e2430; }
+    #app::-webkit-scrollbar-thumb { background: #3b445b; border-radius: 8px; }
+
+    /* top bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 0 16px 0;
+      border-bottom: 1px solid #2a3140;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .currency {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      background: #1e2532;
+      padding: 6px 16px 6px 12px;
+      border-radius: 40px;
+      border: 1px solid #2f384b;
+    }
+    .currency span { display: flex; align-items: center; gap: 4px; }
+    .coin-icon, .gem-icon { display: inline-block; width: 22px; height: 22px; }
+    .coin-icon { background: radial-gradient(circle at 30% 30%, #f9d976, #e8b32a); border-radius: 50%; box-shadow: 0 0 6px #f7b32b; }
+    .gem-icon { background: radial-gradient(circle at 30% 30%, #8ef, #2a8cff); border-radius: 4px; transform: rotate(15deg); }
+    .level-badge {
+      background: #2f3a50;
+      padding: 4px 14px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      border: 1px solid #4a5670;
+    }
+
+    /* xp bar */
+    .xp-wrap {
+      background: #1e2532;
+      border-radius: 30px;
+      height: 8px;
+      margin: 14px 0 10px 0;
+      overflow: hidden;
+      border: 1px solid #2f384b;
+    }
+    .xp-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #d4a0ff, #8b5cf6);
+      border-radius: 30px;
+      transition: width 0.3s ease;
+    }
+
+    /* bottom nav */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      background: #0e121c;
+      border-top: 1px solid #28303f;
+      padding: 6px 0 env(safe-area-inset-bottom);
+      max-width: 480px;
+      margin: 0 auto;
+      right: 0;
+      z-index: 40;
+      backdrop-filter: blur(8px);
+    }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #7c88a3;
+      font-size: 0.65rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      padding: 4px 6px;
+      border-radius: 20px;
+      transition: 0.15s;
+      cursor: pointer;
+      font-weight: 500;
+      flex: 1;
+    }
+    .nav-btn svg { width: 26px; height: 26px; fill: currentColor; stroke: currentColor; stroke-width: 1.5; }
+    .nav-btn.active { color: #b7a4ff; background: #222b3d; }
+    .nav-btn:active { transform: scale(0.92); }
+
+    /* pages */
+    .page { display: none; animation: fade 0.2s; }
+    .page.active { display: block; }
+    @keyframes fade { from { opacity: 0.3; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* business card */
+    .biz-card {
+      background: #1a212c;
+      border-radius: 24px;
+      padding: 18px 16px;
+      margin-bottom: 14px;
+      border: 1px solid #2b3445;
+      transition: 0.15s;
+      box-shadow: 0 6px 10px rgba(0,0,0,0.4);
+    }
+    .biz-card .row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .biz-name { font-weight: 700; font-size: 1.2rem; }
+    .biz-income { color: #c7d2f0; font-size: 0.9rem; background: #283040; padding: 4px 14px; border-radius: 40px; }
+    .biz-level { background: #2f3b53; padding: 2px 12px; border-radius: 40px; font-size: 0.75rem; }
+    .upgrade-btn, .hire-btn {
+      background: #3d4b68;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 40px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.1s;
+      border: 1px solid #57668b;
+      box-shadow: 0 2px 0 #0f141f;
+    }
+    .upgrade-btn:active, .hire-btn:active { transform: scale(0.95); background: #2f3b57; }
+    .upgrade-btn:disabled { opacity: 0.4; transform: none; }
+
+    /* employee cards */
+    .emp-item {
+      background: #1b2330;
+      border-radius: 20px;
+      padding: 12px 14px;
+      margin: 8px 0;
+      border-left: 4px solid #7c8bb0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* stats grid */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .stat-card {
+      background: #19202b;
+      border-radius: 20px;
+      padding: 16px 10px;
+      text-align: center;
+      border: 1px solid #2c3549;
+    }
+
+    /* mission / achievement */
+    .mission-item, .achieve-item {
+      background: #1b2330;
+      border-radius: 18px;
+      padding: 14px;
+      margin: 10px 0;
+      border-left: 5px solid #7f8fc7;
+    }
+
+    /* responsive */
+    @media (max-width: 420px) {
+      .currency { font-size: 1rem; padding: 4px 12px; }
+      .biz-name { font-size: 1rem; }
+    }
+
+    /* floating text */
+    .float-text {
+      position: fixed;
+      pointer-events: none;
+      color: #f5e56b;
+      font-weight: 700;
+      font-size: 1.2rem;
+      text-shadow: 0 0 16px #f0b34b;
+      z-index: 99;
+      animation: floatUp 1.2s ease-out forwards;
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(-80px) scale(1.3); }
+    }
+
+    /* settings toggle */
+    .toggle-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #28303f; }
+    .switch { width: 44px; height: 26px; background: #2f3b53; border-radius: 40px; cursor: pointer; transition: 0.2s; position: relative; }
+    .switch.active { background: #7b6cf6; }
+    .switch::after { content: ''; position: absolute; width: 20px; height: 20px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: 0.2s; }
+    .switch.active::after { left: 21px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- top bar -->
+  <div class="top-bar">
+    <div class="currency"><span><i class="coin-icon"></i> <span id="coinDisplay">0</span></span> <span><i class="gem-icon"></i> <span id="gemDisplay">0</span></span></div>
+    <div class="level-badge">Lv.<span id="playerLevel">1</span></div>
+  </div>
+  <div class="xp-wrap"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+
+  <!-- pages -->
+  <div id="pageHome" class="page active">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px"><h3>☕ Tea Stall</h3><span id="homeIncome">+0/s</span></div>
+    <div class="biz-card" id="homeBizCard">
+      <div class="row"><span class="biz-name">Tea Stall</span><span class="biz-income" id="homeBizIncome">0/s</span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        <button class="upgrade-btn" data-biz="0" id="upgradeHome">⬆ Upgrade (50)</button>
+        <button class="hire-btn" data-biz="0" id="hireHome">👤 Hire (30)</button>
+        <button class="upgrade-btn" data-biz="0" id="managerHome">🧠 Manager</button>
+      </div>
+      <div style="margin-top:10px;font-size:0.8rem;color:#a5b3d0;"><span id="empCountHome">0</span> employees · Lv.<span id="bizLevelHome">1</span></div>
+    </div>
+    <button id="collectBtn" style="width:100%;padding:14px;background:#3b4b6e;border:none;border-radius:60px;color:white;font-weight:700;font-size:1.2rem;border:1px solid #5f74a0;margin:6px 0 14px;box-shadow:0 4px 0 #1b2335;">💵 Collect Coins</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+      <button class="upgrade-btn" id="unlockBizBtn" style="background:#4b3f7a;">🔓 Unlock Business</button>
+      <button class="upgrade-btn" id="prestigeBtn" style="background:#4f3f5e;">✨ Prestige</button>
+    </div>
+    <div id="randomEventBox" style="margin:12px 0;padding:10px;background:#212b3d;border-radius:20px;border-left:6px solid #bf8cff;">🎉 Random event: none</div>
+  </div>
+
+  <div id="pageBusiness" class="page"><h3>🏢 Businesses</h3><div id="businessList"></div></div>
+  <div id="pageEmployees" class="page"><h3>👨‍💼 Employees</h3><div id="employeeList"></div></div>
+  <div id="pageStats" class="page"><h3>📊 Statistics</h3><div class="stat-grid" id="statsGrid"></div></div>
+  <div id="pageMissions" class="page"><h3>🎯 Missions</h3><div id="missionList"></div></div>
+  <div id="pageAchievements" class="page"><h3>🏆 Achievements</h3><div id="achievementList"></div></div>
+  <div id="pageSettings" class="page"><h3>⚙ Settings</h3><div id="settingsContent"></div></div>
+
+  <!-- bottom nav -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" data-page="pageHome"><svg viewBox="0 0 24 24"><path d="M12 3L3 9l9 6 9-6-9-6z"/><path d="M3 15l9 6 9-6"/></svg>Home</button>
+    <button class="nav-btn" data-page="pageBusiness"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="1"/><path d="M8 8V4h8v4"/></svg>Biz</button>
+    <button class="nav-btn" data-page="pageEmployees"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M5 20v-2a7 7 0 0114 0v2"/></svg>Staff</button>
+    <button class="nav-btn" data-page="pageStats"><svg viewBox="0 0 24 24"><path d="M21 12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2h6"/><path d="M15 3h6v6"/><path d="M10 14L21 3"/></svg>Stats</button>
+    <button class="nav-btn" data-page="pageMissions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>Goals</button>
+    <button class="nav-btn" data-page="pageAchievements"><svg viewBox="0 0 24 24"><path d="M12 2L9 9H2l5.5 5L5 22l7-4 7 4-2.5-8L22 9h-7L12 2z"/></svg>Ach</button>
+    <button class="nav-btn" data-page="pageSettings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>Settings</button>
+  </div>
+</div>
+<script>
+  (function(){
+    "use strict";
+    // ---------- GAME STATE ----------
+    const game = {
+      coins: 100,
+      gems: 0,
+      xp: 0,
+      level: 1,
+      totalCoinsEarned: 0,
+      totalCustomers: 0,
+      totalPlayTime: 0,
+      businesses: [],
+      employees: [],
+      missions: [],
+      achievements: [],
+      prestigeMultiplier: 1,
+      reputation: 50,
+      unlockedBusinessIndex: 0,
+      lastSave: Date.now(),
+      offlineEarnings: 0,
+      dailyRewardClaimed: false,
+      randomEvent: null,
+      managerUnlocked: false,
+    };
+
+    // Business templates
+    const BIZ_TEMPLATES = [
+      { name: 'Tea Stall', baseIncome: 1.2, unlockCost: 0, emoji: '☕' },
+      { name: 'Restaurant', baseIncome: 5, unlockCost: 800, emoji: '🍽️' },
+      { name: 'Cafe', baseIncome: 12, unlockCost: 2500, emoji: '☕' },
+      { name: 'Bakery', baseIncome: 28, unlockCost: 6000, emoji: '🍞' },
+      { name: 'Car Wash', baseIncome: 60, unlockCost: 15000, emoji: '🚗' },
+      { name: 'Grocery Store', baseIncome: 130, unlockCost: 40000, emoji: '🛒' },
+      { name: 'Hotel', baseIncome: 300, unlockCost: 90000, emoji: '🏨' },
+      { name: 'Mall', baseIncome: 700, unlockCost: 200000, emoji: '🏬' },
+      { name: 'Cinema', baseIncome: 1500, unlockCost: 450000, emoji: '🎬' },
+      { name: 'Factory', baseIncome: 3400, unlockCost: 1e6, emoji: '🏭' },
+      { name: 'IT Company', baseIncome: 7500, unlockCost: 2.5e6, emoji: '💻' },
+      { name: 'Airline', baseIncome: 18000, unlockCost: 6e6, emoji: '✈️' },
+      { name: 'Space Company', baseIncome: 45000, unlockCost: 15e6, emoji: '🚀' }
+    ];
+
+    // init businesses
+    function initBusinesses() {
+      game.businesses = BIZ_TEMPLATES.map((t, i) => ({
+        id: i,
+        name: t.name,
+        emoji: t.emoji,
+        baseIncome: t.baseIncome,
+        level: i===0?1:0,
+        unlocked: i===0,
+        unlockCost: t.unlockCost,
+        employees: [],
+        manager: false,
+        incomeMultiplier: 1,
+        upgradeLevel: 0,
+        reputation: 50,
+      }));
+    }
+    initBusinesses();
+
+    // employees
+    function addEmployee(bizId) {
+      const biz = game.businesses[bizId];
+      if (!biz || !biz.unlocked) return false;
+      const cost = 30 + (biz.employees.length * 12);
+      if (game.coins < cost) return false;
+      game.coins -= cost;
+      const emp = {
+        id: Date.now() + Math.random(),
+        bizId,
+        name: 'Staff',
+        salary: 5 + biz.employees.length * 2,
+        efficiency: 0.3 + Math.random() * 0.3,
+        level: 1,
+        happiness: 0.7
+      };
+      biz.employees.push(emp);
+      game.employees.push(emp);
+      return true;
+    }
+
+    // helpers
+    function getBusinessIncome(biz) {
+      if (!biz.unlocked) return 0;
+      let base = biz.baseIncome * (1 + biz.level * 0.4) * (1 + biz.upgradeLevel * 0.15) * game.prestigeMultiplier;
+      let empBonus = biz.employees.reduce((sum, e) => sum + e.efficiency * 0.3, 0);
+      base *= (1 + empBonus);
+      if (biz.manager) base *= 1.5;
+      return base;
+    }
+
+    function getTotalIncome() {
+      let sum = 0;
+      for (let b of game.businesses) sum += getBusinessIncome(b);
+      return sum;
+    }
+
+    // save / load
+    function saveGame() {
+      try {
+        const data = { ...game, lastSave: Date.now() };
+        localStorage.setItem('stardustTycoon', JSON.stringify(data));
+      } catch(e){}
+    }
+
+    function loadGame() {
+      try {
+        const raw = localStorage.getItem('stardustTycoon');
+        if (!raw) return false;
+        const data = JSON.parse(raw);
+        Object.assign(game, data);
+        // ensure businesses
+        if (!game.businesses || game.businesses.length===0) initBusinesses();
+        // recalc
+        return true;
+      } catch(e){ return false; }
+    }
+
+    // offline
+    function calcOffline() {
+      const now = Date.now();
+      const diff = (now - game.lastSave) / 1000;
+      if (diff > 5) {
+        const income = getTotalIncome();
+        const earned = income * diff * 0.6; // 60% offline
+        if (earned > 0.1) {
+          game.coins += earned;
+          game.offlineEarnings += earned;
+          game.totalCoinsEarned += earned;
+        }
+      }
+      game.lastSave = now;
+    }
+
+    // UI update
+    function updateUI() {
+      document.getElementById('coinDisplay').textContent = Math.floor(game.coins);
+      document.getElementById('gemDisplay').textContent = game.gems;
+      document.getElementById('playerLevel').textContent = game.level;
+      const xpNeeded = game.level * 20 + 30;
+      const pct = Math.min(100, (game.xp / xpNeeded) * 100);
+      document.getElementById('xpFill').style.width = pct + '%';
+
+      // home
+      const total = getTotalIncome();
+      document.getElementById('homeIncome').textContent = '+' + total.toFixed(1) + '/s';
+      const homeBiz = game.businesses[0];
+      if (homeBiz) {
+        document.getElementById('homeBizIncome').textContent = getBusinessIncome(homeBiz).toFixed(1)+'/s';
+        document.getElementById('bizLevelHome').textContent = homeBiz.level;
+        document.getElementById('empCountHome').textContent = homeBiz.employees.length;
+      }
+      // random event
+      if (game.randomEvent) {
+        document.getElementById('randomEventBox').innerHTML = '🎲 ' + game.randomEvent;
+      }
+      renderBusinessList();
+      renderEmployees();
+      renderStats();
+      renderMissions();
+      renderAchievements();
+      renderSettings();
+    }
+
+    // render business list
+    function renderBusinessList() {
+      const container = document.getElementById('businessList');
+      let html = '';
+      for (let b of game.businesses) {
+        if (!b.unlocked) {
+          html += `<div class="biz-card" style="opacity:0.6"><div class="row"><span>🔒 ${b.name}</span><span>💰 ${b.unlockCost}</span></div><button class="upgrade-btn" data-unlock="${b.id}">Unlock</button></div>`;
+          continue;
+        }
+        const inc = getBusinessIncome(b);
+        html += `<div class="biz-card"><div class="row"><span class="biz-name">${b.emoji} ${b.name}</span><span class="biz-income">+${inc.toFixed(1)}/s</span></div>
+          <div>Lv.${b.level} · Upg.${b.upgradeLevel} · ${b.employees.length} staff ${b.manager?'🧠':''}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+            <button class="upgrade-btn" data-bizup="${b.id}">⬆ Upgrade (${Math.floor(50 + b.level*15)})</button>
+            <button class="hire-btn" data-bizhire="${b.id}">👤 Hire (${30 + b.employees.length*12})</button>
+            <button class="upgrade-btn" data-bizman="${b.id}">🧠 Manager</button>
+          </div></div>`;
+      }
+      container.innerHTML = html;
+      // attach events
+      container.querySelectorAll('[data-unlock]').forEach(btn => {
+        btn.onclick = function() {
+          const id = parseInt(this.dataset.unlock);
+          unlockBusiness(id);
+        };
+      });
+      container.querySelectorAll('[data-bizup]').forEach(btn => {
+        btn.onclick = function() {
+          const id = parseInt(this.dataset.bizup);
+          upgradeBusiness(id);
+        };
+      });
+      container.querySelectorAll('[data-bizhire]').forEach(btn => {
+        btn.onclick = function() {
+          const id = parseInt(this.dataset.bizhire);
+          addEmployee(id);
+          updateUI();
+        };
+      });
+      container.querySelectorAll('[data-bizman]').forEach(btn => {
+        btn.onclick = function() {
+          const id = parseInt(this.dataset.bizman);
+          const biz = game.businesses[id];
+          if (biz && !biz.manager && game.coins >= 200) {
+            game.coins -= 200;
+            biz.manager = true;
+            updateUI();
+          }
+        };
+      });
+    }
+
+    function renderEmployees() {
+      const container = document.getElementById('employeeList');
+      if (game.employees.length === 0) {
+        container.innerHTML = '<div style="padding:20px;text-align:center;color:#7a88a8;">No employees yet. Hire from Business tab.</div>';
+        return;
+      }
+      let html = '';
+      for (let e of game.employees) {
+        const biz = game.businesses[e.bizId];
+        html += `<div class="emp-item"><div><strong>${biz?biz.name:'Unknown'}</strong> · Lv.${e.level} · ⚡${(e.efficiency*100).toFixed(0)}%</div><div>💰${e.salary.toFixed(1)}</div></div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function renderStats() {
+      const grid = document.getElementById('statsGrid');
+      const totalInc = getTotalIncome();
+      grid.innerHTML = `
+        <div class="stat-card">🪙 Total Coins<br><strong>${Math.floor(game.totalCoinsEarned)}</strong></div>
+        <div class="stat-card">👥 Customers<br><strong>${Math.floor(game.totalCustomers)}</strong></div>
+        <div class="stat-card">🏢 Businesses<br><strong>${game.businesses.filter(b=>b.unlocked).length}</strong></div>
+        <div class="stat-card">👨‍💼 Employees<br><strong>${game.employees.length}</strong></div>
+        <div class="stat-card">📈 Income/s<br><strong>${totalInc.toFixed(1)}</strong></div>
+        <div class="stat-card">⭐ Reputation<br><strong>${game.reputation.toFixed(0)}</strong></div>
+        <div class="stat-card">⏱️ Play Time<br><strong>${Math.floor(game.totalPlayTime/60)}m</strong></div>
+        <div class="stat-card">✨ Multiplier<br><strong>${game.prestigeMultiplier.toFixed(1)}x</strong></div>
+      `;
+    }
+
+    function renderMissions() {
+      const container = document.getElementById('missionList');
+      const missions = [
+        { name: 'Earn 500 coins', done: game.totalCoinsEarned >= 500, reward: 30 },
+        { name: 'Hire 3 employees', done: game.employees.length >= 3, reward: 50 },
+        { name: 'Reach level 5', done: game.level >= 5, reward: 80 },
+        { name: 'Own 3 businesses', done: game.businesses.filter(b=>b.unlocked).length >= 3, reward: 100 },
+      ];
+      let html = '';
+      for (let m of missions) {
+        html += `<div class="mission-item" style="${m.done?'border-left-color:#6fcf97;':''}">${m.done?'✅':''} ${m.name} <span style="float:right;">+${m.reward}🪙</span></div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function renderAchievements() {
+      const container = document.getElementById('achievementList');
+      const ach = [
+        { name: 'First Coin', done: game.totalCoinsEarned >= 1 },
+        { name: 'First Employee', done: game.employees.length >= 1 },
+        { name: 'First Million', done: game.totalCoinsEarned >= 1e6 },
+        { name: 'Business Empire', done: game.businesses.filter(b=>b.unlocked).length >= 5 },
+      ];
+      let html = '';
+      for (let a of ach) {
+        html += `<div class="achieve-item" style="${a.done?'border-left-color:#f7c948;':''}">${a.done?'🏅':''} ${a.name}</div>`;
+      }
+      container.innerHTML = html;
+    }
+
+    function renderSettings() {
+      const container = document.getElementById('settingsContent');
+      container.innerHTML = `
+        <div class="toggle-row"><span>Sound FX</span><div class="switch" id="soundToggle"></div></div>
+        <div class="toggle-row"><span>Auto Save</span><div class="switch active" id="autosaveToggle"></div></div>
+        <button class="upgrade-btn" style="width:100%;margin:16px 0;background:#3f3f6b;" id="resetBtn">Reset Game</button>
+        <div style="margin-top:10px;font-size:0.8rem;color:#6a7a96;">v1.0 · Stardust Tycoon</div>
+      `;
+      document.getElementById('soundToggle')?.addEventListener('click', function(){ this.classList.toggle('active'); });
+      document.getElementById('autosaveToggle')?.addEventListener('click', function(){ this.classList.toggle('active'); });
+      document.getElementById('resetBtn')?.addEventListener('click', function(){ if(confirm('Reset all progress?')){ localStorage.removeItem('stardustTycoon'); location.reload(); } });
+    }
+
+    // upgrade business
+    function upgradeBusiness(id) {
+      const biz = game.businesses[id];
+      if (!biz || !biz.unlocked) return;
+      const cost = Math.floor(50 + biz.level * 15);
+      if (game.coins < cost) return;
+      game.coins -= cost;
+      biz.level += 1;
+      game.xp += 5;
+      if (game.xp >= game.level * 20 + 30) { game.level++; game.xp = 0; }
+      updateUI();
+    }
+
+    function unlockBusiness(id) {
+      const biz = game.businesses[id];
+      if (!biz || biz.unlocked) return;
+      if (game.coins < biz.unlockCost) return;
+      game.coins -= biz.unlockCost;
+      biz.unlocked = true;
+      biz.level = 1;
+      updateUI();
+    }
+
+    // collect coins
+    function collectCoins() {
+      const total = getTotalIncome();
+      const earned = total * 0.5 + 5;
+      game.coins += earned;
+      game.totalCoinsEarned += earned;
+      game.totalCustomers += Math.floor(earned / 3) + 1;
+      // floating
+      const el = document.createElement('div');
+      el.className = 'float-text';
+      el.textContent = '+' + earned.toFixed(1);
+      el.style.left = (20 + Math.random()*60) + '%';
+      el.style.top = '40%';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 1200);
+      updateUI();
+    }
+
+    // random events
+    function triggerRandomEvent() {
+      const events = ['Festival Rush +20% income', 'Tax discount +30 coins', 'Celebrity visit +50 reputation', 'Rainy day -10% income', 'Machine breakdown -20 coins'];
+      const e = events[Math.floor(Math.random() * events.length)];
+      game.randomEvent = e;
+      if (e.includes('+')) {
+        const bonus = parseInt(e.match(/\d+/)?.[0] || 0);
+        if (e.includes('income')) { /* handled in income */ }
+        else if (e.includes('coins')) game.coins += bonus;
+        else if (e.includes('reputation')) game.reputation += bonus;
+      }
+      updateUI();
+    }
+
+    // prestige
+    function prestige() {
+      if (game.businesses.filter(b=>b.unlocked).length < 3) return;
+      if (game.coins < 10000) return;
+      game.coins = 0;
+      game.prestigeMultiplier += 0.5;
+      game.businesses.forEach(b => { b.level = 0; b.unlocked = false; b.employees = []; b.manager = false; });
+      game.businesses[0].unlocked = true;
+      game.businesses[0].level = 1;
+      game.employees = [];
+      updateUI();
+    }
+
+    // game loop
+    function gameLoop() {
+      const now = Date.now();
+      const delta = (now - game.lastSave) / 1000;
+      if (delta > 0.5) {
+        const income = getTotalIncome();
+        game.coins += income * delta * 0.2;
+        game.totalCoinsEarned += income * delta * 0.2;
+        game.totalPlayTime += delta;
+        game.lastSave = now;
+        updateUI();
+        // random event 5% chance
+        if (Math.random() < 0.003) triggerRandomEvent();
+      }
+    }
+
+    // init
+    function init() {
+      loadGame();
+      calcOffline();
+      updateUI();
+      // collect button
+      document.getElementById('collectBtn').addEventListener('click', collectCoins);
+      document.getElementById('unlockBizBtn').addEventListener('click', function(){
+        const toUnlock = game.businesses.findIndex(b => !b.unlocked);
+        if (toUnlock === -1) { alert('All businesses unlocked!'); return; }
+        unlockBusiness(toUnlock);
+        updateUI();
+      });
+      document.getElementById('prestigeBtn').addEventListener('click', function(){
+        if (game.businesses.filter(b=>b.unlocked).length < 3) { alert('Need 3 businesses'); return; }
+        if (game.coins < 10000) { alert('Need 10000 coins'); return; }
+        prestige();
+        updateUI();
+      });
+      // nav
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function(){
+          document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+          this.classList.add('active');
+          document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+          document.getElementById(this.dataset.page).classList.add('active');
+        });
+      });
+      // auto save
+      setInterval(() => { saveGame(); }, 5000);
+      setInterval(gameLoop, 800);
+      // home upgrade etc
+      document.getElementById('upgradeHome').addEventListener('click', function(){ upgradeBusiness(0); updateUI(); });
+      document.getElementById('hireHome').addEventListener('click', function(){ addEmployee(0); updateUI(); });
+      document.getElementById('managerHome').addEventListener('click', function(){
+        const biz = game.businesses[0];
+        if (biz && !biz.manager && game.coins >= 200) {
+          game.coins -= 200;
+          biz.manager = true;
+          updateUI();
+        }
+      });
+    }
+
+    init();
+  })();
+</script>
+</body>
+</html>
